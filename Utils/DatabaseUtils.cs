@@ -10,6 +10,14 @@ namespace VideoStoreApi.Utils
 {
     public class DatabaseUtils
     {
+        public const string DbConnectionString = "user id=root;" + // database username  Badger_dev01
+                                                "password=Badger_dev01;" + //database password
+                                                "server=localhost;" + //server/computer name/IP
+                                                "database=badger_database_rev1;"; //database/schema name
+
+        public const string databasename = "badger_database_rev1";
+
+
         private DatabaseUtils()
         {
         }
@@ -50,7 +58,7 @@ namespace VideoStoreApi.Utils
                 {
                     if (String.IsNullOrEmpty(databaseName))
                         return false;
-                    string connstring = string.Format(PasswordUtils.DbConnectionString, databaseName);
+                    string connstring = string.Format(DbConnectionString, databaseName);
                     connection = new MySqlConnection(connstring);
                     connection.Open();
                 }
@@ -75,10 +83,10 @@ namespace VideoStoreApi.Utils
             connection = null;
         }
 
-        public bool makeDBQuery(string DBQuery, bool readResponse)
+        public bool makeDBQuery(string DBQuery)
         {
             var dbCon = DatabaseUtils.Instance();
-            dbCon.DatabaseName = "forclass";
+            dbCon.DatabaseName = DatabaseUtils.databasename;
             if (dbCon.IsConnect())
             {
                 var cmd = new MySqlCommand(DBQuery, dbCon.Connection);

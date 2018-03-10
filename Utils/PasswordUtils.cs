@@ -10,12 +10,6 @@ namespace VideoStoreApi.Utils
 {
     public class PasswordUtils
     {
-        public const string DbConnectionString = "user id=username;" + // database username
-                                                 "password=password;" + //database password
-                                                 "server=localhost;" + //server/computer name/IP
-                                                 "database=forclass;"; //database/schema name
-
-
         /*
          * Crypto Code Copied / Modified From: https://stackoverflow.com/questions/4181198/how-to-hash-a-password/10402129#10402129
          * Regex  Code Copied / Modified From: https://msdn.microsoft.com/en-us/library/ff648339.aspx

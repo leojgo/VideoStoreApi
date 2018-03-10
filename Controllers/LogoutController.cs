@@ -55,4 +55,9 @@ namespace VideoStoreApi.Controllers
             return new NoContentResult();
         }
     }
+
+    public class Logout
+    {
+        public int username { get; set; }
+    }
 }

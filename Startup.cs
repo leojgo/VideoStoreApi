@@ -26,8 +26,8 @@ namespace VideoStoreApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<EmployeeContext>(opt => opt.UseInMemoryDatabase("Employees"));
+            services.AddDbContext<CustomerContext>(opt => opt.UseInMemoryDatabase("Customers"));
 // add permissions
-// add customers
 // add movies
             services.AddMvc();
         }
