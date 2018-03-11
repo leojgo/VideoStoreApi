@@ -14,6 +14,8 @@ namespace VideoStoreApi.Controllers
     [Route("api/Customers")]
     public class CustomerIdController : Controller
     {
+        private string _msg = null;
+
         private readonly CustomerContext _context;
 
         public CustomerIdController(CustomerContext context)
@@ -38,6 +40,7 @@ namespace VideoStoreApi.Controllers
 
             if (item == null)
             {
+                _msg = "Customer Was Not Found";
                 return NotFound();
             }
 
@@ -49,18 +52,18 @@ namespace VideoStoreApi.Controllers
         public IActionResult DeleteCustomer(int id)
         {
             CustomerUtils newCustUtil = new CustomerUtils();
-            if (newCustUtil.MakeCustomerInactive(id))
+            if (newCustUtil.MakeCustomerInactive(id, ref _msg))
             {
                 return NoContent();
             }
 
-            return NotFound();
+            return NotFound(_msg);
         }
 
 
         //Updates Customer
         [HttpPost("{id}")]
-        public IActionResult UpdateInfo([FromBody] Customer Customer)
+        public IActionResult UpdateInfo([FromBody] Customer customer)
         {
             //if (credentials.username.ToString() == null || credentials.password == null)
             //{
@@ -68,17 +71,16 @@ namespace VideoStoreApi.Controllers
             //}
 
             CustomerUtils newCustUtil = new CustomerUtils();
-            bool result = newCustUtil.UpdateCustomer(Customer);
+            bool result = newCustUtil.UpdateCustomer(customer, ref _msg);
 
             if (result)
             {
                 //SUCCESS
-                _context.Customers.Add(Customer);
+                _context.Customers.Add(customer);
                 _context.SaveChanges();
-                return CreatedAtRoute("GetCustomer", new {id = Customer.CustomerId}, Customer);
+                return CreatedAtRoute("GetCustomer", new {id = customer.CustomerId}, customer);
             }
-
-            return BadRequest();
+            return BadRequest(_msg);
 
         }
     }

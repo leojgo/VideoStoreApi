@@ -9,15 +9,30 @@ namespace VideoStoreApi.Utils
 {
     public class EmployeeUtils
     {
-        public Employee LogIn(int userIdNumber, string password)
+        public Employee LogIn(int userIdNumber, string password, ref string msg)
         {
             try
             {
-                return HandleLogIn(userIdNumber, password);
+                string loginStringQuery = "SELECT * " +
+                                          $"FROM {DatabaseUtils.Databasename}.employeelist " +
+                                          $"WHERE EMP_ID = {userIdNumber};";
 
+                Employee toLogIn = SqlGetEmployee(loginStringQuery);
+
+                if (PasswordUtils.Verify(password, toLogIn.PwHash))
+                {
+                    GetEmployeeTitle(toLogIn);
+                    msg = "Login Successful!";
+                    return toLogIn;
+                }
+
+                msg = "Login or Password were incorrect!";
+                return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e);
+                msg = "An Exception was thrown! " + e.ToString();
                 return null;
             }
         }
@@ -34,7 +49,7 @@ namespace VideoStoreApi.Utils
                     string createUserQuery = "INSERT INTO {DatabaseUtils.databasename}.employeelist(EMP_Name_First, EMP_Name_Last, EMP_PW_Hash,EMP_Active, EMP_Type) " +
                                                 $"VALUES('{newEmployee.FirstName}', '{newEmployee.LastName}','{newEmployee.PwHash}','1','{newEmployee.EmployeeType}');";
                     DatabaseUtils createUser = DatabaseUtils.Instance();
-                    return createUser.makeDBQuery(createUserQuery);
+                    return createUser.MakeDbQuery(createUserQuery);
                 }
                 else
                 {
@@ -49,7 +64,7 @@ namespace VideoStoreApi.Utils
 
         public Employee ViewEmployeeAccount(int empId)
         {
-            string loginStringQuery = $"SELECT * FROM {DatabaseUtils.databasename}.employeelist WHERE EMP_ID = {empId};";
+            string loginStringQuery = $"SELECT * FROM {DatabaseUtils.Databasename}.employeelist WHERE EMP_ID = {empId};";
             return SqlGetEmployee(loginStringQuery);
         }
 
@@ -62,7 +77,7 @@ namespace VideoStoreApi.Utils
                     Employee newInfo = updatedEmployee;
                     newInfo.PwHash = PasswordUtils.Hash(updatedEmployee.RawPw);
 
-                    string updateEmployeeInfoQuery = $"UPDATE {DatabaseUtils.databasename}.employeelist " +
+                    string updateEmployeeInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.employeelist " +
                                                      $"SET EMP_Name_First = '{newInfo.FirstName}', " +
                                                      $"EMP_Name_Last = '{newInfo.LastName}', " +
                                                      $"EMP_PW_Hash = '{newInfo.PwHash}', " +
@@ -71,7 +86,7 @@ namespace VideoStoreApi.Utils
                                                      $"WHERE EMP_ID = '{newInfo.EmployeeId}';";
 
                     var updateEmployee = DatabaseUtils.Instance();
-                    return updateEmployee.makeDBQuery(updateEmployeeInfoQuery);
+                    return updateEmployee.MakeDbQuery(updateEmployeeInfoQuery);
                 }
                 else
                 {
@@ -86,39 +101,12 @@ namespace VideoStoreApi.Utils
 
 
         //PRIVATES GO BELOW!!!!
-
-        //TESTED, Works
-        private Employee HandleLogIn(int userIdNumber, string password)
-        {
-            try
-            {
-                string loginStringQuery = "SELECT * " +
-                                          $"FROM {DatabaseUtils.databasename}.employeelist " +
-                                          $"WHERE EMP_ID = {userIdNumber};";
-
-                Employee toLogIn = SqlGetEmployee(loginStringQuery);
-
-                if (PasswordUtils.Verify(password, toLogIn.PwHash))
-                {
-                    GetEmployeeTitle(toLogIn);
-                    return toLogIn;
-                }
-
-                return null;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
         private void GetEmployeeTitle(Employee empToCheck)
         {
             try
             {
                 string employerTitleQuery = "SELECT Emp_Title " +
-                                            $"FROM {DatabaseUtils.databasename}.employeetitles " +
+                                            $"FROM {DatabaseUtils.Databasename}.employeetitles " +
                                             $"WHERE EMP_LVL = {empToCheck.EmployeeType}";
 
                 empToCheck.EmployeeTitle = SqlGetEmployeeTitle(employerTitleQuery);
@@ -148,7 +136,7 @@ namespace VideoStoreApi.Utils
         {
             string employeeTitle = null;
             var dbCon = DatabaseUtils.Instance();
-            dbCon.DatabaseName = DatabaseUtils.databasename;
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
             if (dbCon.IsConnect())
             {
                 var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
@@ -209,7 +197,7 @@ namespace VideoStoreApi.Utils
         {
             Employee temp = new Employee();
             var dbCon = DatabaseUtils.Instance();
-            dbCon.DatabaseName = DatabaseUtils.databasename;
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
             if (dbCon.IsConnect())
             {
                 var cmd = new MySqlCommand(dbQuery, dbCon.Connection);

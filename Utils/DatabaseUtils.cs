@@ -15,25 +15,25 @@ namespace VideoStoreApi.Utils
                                                 "server=localhost;" + //server/computer name/IP
                                                 "database=badger_database_rev1;"; //database/schema name
 
-        public const string databasename = "badger_database_rev1";
+        public const string Databasename = "badger_database_rev1";
 
 
         private DatabaseUtils()
         {
         }
 
-        private string databaseName = string.Empty;
+        private string _databaseName = string.Empty;
         public string DatabaseName
         {
-            get { return databaseName; }
-            set { databaseName = value; }
+            get { return _databaseName; }
+            set { _databaseName = value; }
         }
 
         public string Password { get; set; }
-        private MySqlConnection connection = null;
+        private MySqlConnection _connection = null;
         public MySqlConnection Connection
         {
-            get { return connection; }
+            get { return _connection; }
         }
 
         private static DatabaseUtils _instance = null;
@@ -56,15 +56,15 @@ namespace VideoStoreApi.Utils
             {
                 try
                 {
-                    if (String.IsNullOrEmpty(databaseName))
+                    if (String.IsNullOrEmpty(_databaseName))
                         return false;
-                    string connstring = string.Format(DbConnectionString, databaseName);
-                    connection = new MySqlConnection(connstring);
-                    connection.Open();
+                    string connstring = string.Format(DbConnectionString, _databaseName);
+                    _connection = new MySqlConnection(connstring);
+                    _connection.Open();
                 }
                 catch (Exception e)
                 {
-                    if (connection.Ping())
+                    if (_connection.Ping())
                     {
                         return true;
                     }
@@ -79,17 +79,17 @@ namespace VideoStoreApi.Utils
 
         public void Close()
         {
-            connection.Close();
-            connection = null;
+            _connection.Close();
+            _connection = null;
         }
 
-        public bool makeDBQuery(string DBQuery)
+        public bool MakeDbQuery(string dbQuery)
         {
             var dbCon = DatabaseUtils.Instance();
-            dbCon.DatabaseName = DatabaseUtils.databasename;
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
             if (dbCon.IsConnect())
             {
-                var cmd = new MySqlCommand(DBQuery, dbCon.Connection);
+                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
 
                 //Used for Reading response only!!!  This needs to be implemented in it's own class!!!
                 /*
@@ -108,20 +108,20 @@ namespace VideoStoreApi.Utils
                     try
                     {
                         cmd.ExecuteNonQuery();
-                        DBQuery = null;
+                        dbQuery = null;
                         dbCon.Close();
                         return true;
                     }
                     catch (Exception e)
                     {
-                        DBQuery = null;
+                        dbQuery = null;
                         dbCon.Close();
                         return false;
                     }
 
                 //}
 
-                DBQuery = null;
+                dbQuery = null;
                 dbCon.Close();
             }
 

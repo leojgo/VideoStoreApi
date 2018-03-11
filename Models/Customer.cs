@@ -9,21 +9,21 @@ namespace LackLusterVideo.Models
     {
             public int CustomerId { get; set; }
 
-            public string Name_First { get; set; }
+            public string NameFirst { get; set; }
 
-            public string Name_Middle_In { get; set; }
+            public string NameMiddleIn { get; set; }
 
-            public string Name_Last { get; set; }
+            public string NameLast { get; set; }
 
-            public string Add_Line1 { get; set; }
+            public string AddLine1 { get; set; }
 
-            public string Add_Line2 { get; set; }
+            public string AddLine2 { get; set; }
 
-            public string Add_City { get; set; }
+            public string AddCity { get; set; }
 
-            public string Add_State { get; set; }
+            public string AddState { get; set; }
 
-            public int Add_Zip { get; set; }
+            public int AddZip { get; set; }
 
             public long PhoneNumber { get; set; }
 

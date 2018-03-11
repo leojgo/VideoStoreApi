@@ -13,6 +13,9 @@ namespace VideoStoreApi.Controllers
     [Route("api/Login")]
     public class LoginController : Controller
     {
+        private string _msg = null;
+
+
         private readonly EmployeeContext _context;
 
         public LoginController(EmployeeContext context)
@@ -34,7 +37,8 @@ namespace VideoStoreApi.Controllers
             var item = _context.Employees.FirstOrDefault(t => t.EmployeeId == id);
             if (item == null)
             {
-                return NotFound();
+                _msg = "Employee Was Not Found!";
+                return NotFound(_msg);
             }
             return new ObjectResult(item);
         }
@@ -42,13 +46,14 @@ namespace VideoStoreApi.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] Login credentials)
         {
-            if (credentials.username.ToString() == null || credentials.password == null)
+            if (credentials.Username.ToString() == null || credentials.Password == null)
             {
-                return BadRequest();
+                _msg = "Username or Password was not provided!";
+                return BadRequest(_msg);
             }
 
             EmployeeUtils newEmpUtil = new EmployeeUtils();
-            Employee toLogIn = newEmpUtil.LogIn(credentials.username, credentials.password);
+            Employee toLogIn = newEmpUtil.LogIn(credentials.Username, credentials.Password, ref _msg);
 
             if (toLogIn != null)
             {
@@ -56,14 +61,14 @@ namespace VideoStoreApi.Controllers
                 _context.SaveChanges();
                 return CreatedAtRoute("GetEmployee", new {id = toLogIn.EmployeeId}, toLogIn );
             }
-            return NotFound();
-            
+
+            return NotFound(_msg);
         }
     }
 
     public class Login
     {
-        public int username { get; set; }
-        public string password { get; set; }
+        public int Username { get; set; }
+        public string Password { get; set; }
     }
 }

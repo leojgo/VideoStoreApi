@@ -14,8 +14,9 @@ namespace VideoStoreApi.Controllers
     [Route("api/Customers")]
     public class CustomerController : Controller
     {
+        private string _msg = null;
         [HttpPost]
-        public IActionResult Create([FromBody] Customer NewCustInfo)
+        public IActionResult Create([FromBody] Customer newCustInfo)
         {
             // Checks for nulls and such here...
 
@@ -26,12 +27,11 @@ namespace VideoStoreApi.Controllers
 
             CustomerUtils newCustUtil = new CustomerUtils();
 
-            if (newCustUtil.MakeNewCustomer(NewCustInfo))
+            if (newCustUtil.MakeNewCustomer(newCustInfo, ref _msg))
             {
                 return Ok();
             }
-            return BadRequest();
-            
+            return BadRequest(_msg);
         }
     }
 }

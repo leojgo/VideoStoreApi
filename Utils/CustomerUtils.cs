@@ -3,104 +3,130 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LackLusterVideo.Models;
+using Microsoft.EntityFrameworkCore.Migrations;
 using MySql.Data.MySqlClient;
 
 namespace VideoStoreApi.Utils
 {
     public class CustomerUtils
     {
-        public bool MakeNewCustomer(Customer ToAdd)
+        public bool MakeNewCustomer(Customer toAdd, ref string msg)
         {
-            string createUserQuery;
-
-            if (ToAdd.Add_Line2 == null)
+            try
             {
-                createUserQuery =
-                    $"INSERT INTO {DatabaseUtils.databasename}.customers(CUST_Name_First, CUST_Name_Middle_In, CUST_Name_Last, CUST_Add_Line1, CUST_Add_Line2, CUST_Add_City, CUST_Add_State, CUST_Add_Zip, CUST_PhoneNumber, CUST_Email, CUST_Newsletter, CUST_AccountBalance, CUST_Active ) " +
-                    $"VALUES('{ToAdd.Name_First}', '{ToAdd.Name_Middle_In}', '{ToAdd.Name_Last}', '{ToAdd.Add_Line1}', null , '{ToAdd.Add_City}', '{ToAdd.Add_State}', '{ToAdd.Add_Zip}', '{ToAdd.PhoneNumber}', '{ToAdd.Email}', {ToAdd.Newsletter}, '{ToAdd.AccountBalance}', {ToAdd.Active});";
-            }
-            else
-            {
-                createUserQuery =
-                    $"INSERT INTO {DatabaseUtils.databasename}.customers(CUST_Name_First, CUST_Name_Middle_In, CUST_Name_Last, CUST_Add_Line1, CUST_Add_Line2, CUST_Add_City, CUST_Add_State, CUST_Add_Zip, CUST_PhoneNumber, CUST_Email, CUST_Newsletter, CUST_AccountBalance, CUST_Active ) " +
-                    $"VALUES('{ToAdd.Name_First}', '{ToAdd.Name_Middle_In}', '{ToAdd.Name_Last}', '{ToAdd.Add_Line1}', '{ToAdd.Add_Line2}', '{ToAdd.Add_City}', '{ToAdd.Add_State}', '{ToAdd.Add_Zip}', '{ToAdd.PhoneNumber}', '{ToAdd.Email}', {ToAdd.Newsletter}, '{ToAdd.AccountBalance}', {ToAdd.Active});";
-            }
+                string createUserQuery;
 
-            DatabaseUtils createCustomer = DatabaseUtils.Instance();
-            return createCustomer.makeDBQuery(createUserQuery);
+                if (toAdd.AddLine2 == null)
+                {
+                    createUserQuery =
+                        $"INSERT INTO {DatabaseUtils.Databasename}.customers(CUST_Name_First, CUST_Name_Middle_In, CUST_Name_Last, CUST_Add_Line1, CUST_Add_Line2, CUST_Add_City, CUST_Add_State, CUST_Add_Zip, CUST_PhoneNumber, CUST_Email, CUST_Newsletter, CUST_AccountBalance, CUST_Active ) " +
+                        $"VALUES('{toAdd.NameFirst}', '{toAdd.NameMiddleIn}', '{toAdd.NameLast}', '{toAdd.AddLine1}', null , '{toAdd.AddCity}', '{toAdd.AddState}', '{toAdd.AddZip}', '{toAdd.PhoneNumber}', '{toAdd.Email}', {toAdd.Newsletter}, '{toAdd.AccountBalance}', {toAdd.Active});";
+                }
+                else
+                {
+                    createUserQuery =
+                        $"INSERT INTO {DatabaseUtils.Databasename}.customers(CUST_Name_First, CUST_Name_Middle_In, CUST_Name_Last, CUST_Add_Line1, CUST_Add_Line2, CUST_Add_City, CUST_Add_State, CUST_Add_Zip, CUST_PhoneNumber, CUST_Email, CUST_Newsletter, CUST_AccountBalance, CUST_Active ) " +
+                        $"VALUES('{toAdd.NameFirst}', '{toAdd.NameMiddleIn}', '{toAdd.NameLast}', '{toAdd.AddLine1}', '{toAdd.AddLine2}', '{toAdd.AddCity}', '{toAdd.AddState}', '{toAdd.AddZip}', '{toAdd.PhoneNumber}', '{toAdd.Email}', {toAdd.Newsletter}, '{toAdd.AccountBalance}', {toAdd.Active});";
+                }
+
+                DatabaseUtils createCustomer = DatabaseUtils.Instance();
+                return createCustomer.MakeDbQuery(createUserQuery);
+            }
+            catch (Exception e)
+            {
+                msg = "An Exception was Thrown! " + e.ToString();
+                return false;
+            }
         }
 
         public Customer GetCustomerById(int id)
         {
-            string GetCustomerQuery = $"SELECT * " +
-                                      $"FROM {DatabaseUtils.databasename}.customers " +
+            string getCustomerQuery = $"SELECT * " +
+                                      $"FROM {DatabaseUtils.Databasename}.customers " +
                                       $"WHERE CUST_ID = {id};";
 
-            return SQLGetCustomerById(GetCustomerQuery);
+            return SqlGetCustomerById(getCustomerQuery);
         }
 
-        public bool MakeCustomerInactive(int id)
+        public bool MakeCustomerInactive(int id, ref string msg)
         {
-             string disableCustomerQuery = $"UPDATE {DatabaseUtils.databasename}.customers " + 
-                                            $"SET CUST_Active = 0 " + 
-                                            $"WHERE CUST_ID = {id};";
-
-            var updateEmployee = DatabaseUtils.Instance();
-            return updateEmployee.makeDBQuery(disableCustomerQuery);
-        }
-
-        public bool UpdateCustomer(Customer UpdatedInfo)
-        {
-            string UpdateCustomerQuery;
-
-            if (UpdatedInfo.Add_Line2 == null)
+            try
             {
-                UpdateCustomerQuery = $"UPDATE {DatabaseUtils.databasename}.customers " +
+                string disableCustomerQuery = $"UPDATE {DatabaseUtils.Databasename}.customers " + 
+                                              $"SET CUST_Active = 0 " + 
+                                              $"WHERE CUST_ID = {id};";
+
+                var updateEmployee = DatabaseUtils.Instance();
+                return updateEmployee.MakeDbQuery(disableCustomerQuery);
+            }
+            catch (Exception e)
+            {
+                msg = "An Exception was thrown! " + e.ToString();
+                return false;
+            }
+        }
+
+        public bool UpdateCustomer(Customer updatedInfo, ref string msg)
+        {
+            try
+            {
+                string updateCustomerQuery;
+
+            if (updatedInfo.AddLine2 == null)
+            {
+                updateCustomerQuery = $"UPDATE {DatabaseUtils.Databasename}.customers " +
                                       "SET " +
-                                      $"CUST_Name_First = '{UpdatedInfo.Name_First}', " +
-                                      $"CUST_Name_Middle_In = '{UpdatedInfo.Name_Middle_In}', " +
-                                      $"CUST_Name_Last = '{UpdatedInfo.Name_Last}', " +
-                                      $"CUST_Add_Line1 = '{UpdatedInfo.Add_Line1}', " +
-                                      $"CUST_Add_City = '{UpdatedInfo.Add_City}', " +
-                                      $"CUST_Add_State = '{UpdatedInfo.Add_State}', " +
-                                      $"CUST_Add_Zip = '{UpdatedInfo.Add_Zip}', " +
-                                      $"CUST_PhoneNumber = '{UpdatedInfo.PhoneNumber}', " +
-                                      $"CUST_Email = '{UpdatedInfo.Email}', " +
-                                      $"CUST_Newsletter = '{Convert.ToInt32(UpdatedInfo.Newsletter)}', " +
-                                      $"CUST_AccountBalance = '{UpdatedInfo.AccountBalance}', " +
-                                      $"CUST_Active = '{Convert.ToInt32(UpdatedInfo.Active)}' " +
-                                      $"WHERE CUST_ID = '{UpdatedInfo.CustomerId}';";
+                                      $"CUST_Name_First = '{updatedInfo.NameFirst}', " +
+                                      $"CUST_Name_Middle_In = '{updatedInfo.NameMiddleIn}', " +
+                                      $"CUST_Name_Last = '{updatedInfo.NameLast}', " +
+                                      $"CUST_Add_Line1 = '{updatedInfo.AddLine1}', " +
+                                      $"CUST_Add_City = '{updatedInfo.AddCity}', " +
+                                      $"CUST_Add_State = '{updatedInfo.AddState}', " +
+                                      $"CUST_Add_Zip = '{updatedInfo.AddZip}', " +
+                                      $"CUST_PhoneNumber = '{updatedInfo.PhoneNumber}', " +
+                                      $"CUST_Email = '{updatedInfo.Email}', " +
+                                      $"CUST_Newsletter = '{Convert.ToInt32(updatedInfo.Newsletter)}', " +
+                                      $"CUST_AccountBalance = '{updatedInfo.AccountBalance}', " +
+                                      $"CUST_Active = '{Convert.ToInt32(updatedInfo.Active)}' " +
+                                      $"WHERE CUST_ID = '{updatedInfo.CustomerId}';";
             }
             else
             {
-                UpdateCustomerQuery = $"UPDATE {DatabaseUtils.databasename}.customers " +
+                updateCustomerQuery = $"UPDATE {DatabaseUtils.Databasename}.customers " +
                                       "SET " +
-                                      $"CUST_Name_First = '{UpdatedInfo.Name_First}', " +
-                                      $"CUST_Name_Middle_In = '{UpdatedInfo.Name_Middle_In}', " +
-                                      $"CUST_Name_Last = '{UpdatedInfo.Name_Last}', " +
-                                      $"CUST_Add_Line1 = '{UpdatedInfo.Add_Line1}', " +
-                                      $"CUST_Add_Line2 = '{UpdatedInfo.Add_Line2}', " +
-                                      $"CUST_Add_City = '{UpdatedInfo.Add_City}', " +
-                                      $"CUST_Add_State = '{UpdatedInfo.Add_State}', " +
-                                      $"CUST_Add_Zip = '{UpdatedInfo.Add_Zip}', " +
-                                      $"CUST_PhoneNumber = '{UpdatedInfo.PhoneNumber}', " +
-                                      $"CUST_Email = '{UpdatedInfo.Email}', " +
-                                      $"CUST_Newsletter = '{Convert.ToInt32(UpdatedInfo.Newsletter)}', " +
-                                      $"CUST_AccountBalance = '{UpdatedInfo.AccountBalance}', " +
-                                      $"CUST_Active = '{Convert.ToInt32(UpdatedInfo.Active)}' " +
-                                      $"WHERE CUST_ID = '{UpdatedInfo.CustomerId}';";
+                                      $"CUST_Name_First = '{updatedInfo.NameFirst}', " +
+                                      $"CUST_Name_Middle_In = '{updatedInfo.NameMiddleIn}', " +
+                                      $"CUST_Name_Last = '{updatedInfo.NameLast}', " +
+                                      $"CUST_Add_Line1 = '{updatedInfo.AddLine1}', " +
+                                      $"CUST_Add_Line2 = '{updatedInfo.AddLine2}', " +
+                                      $"CUST_Add_City = '{updatedInfo.AddCity}', " +
+                                      $"CUST_Add_State = '{updatedInfo.AddState}', " +
+                                      $"CUST_Add_Zip = '{updatedInfo.AddZip}', " +
+                                      $"CUST_PhoneNumber = '{updatedInfo.PhoneNumber}', " +
+                                      $"CUST_Email = '{updatedInfo.Email}', " +
+                                      $"CUST_Newsletter = '{Convert.ToInt32(updatedInfo.Newsletter)}', " +
+                                      $"CUST_AccountBalance = '{updatedInfo.AccountBalance}', " +
+                                      $"CUST_Active = '{Convert.ToInt32(updatedInfo.Active)}' " +
+                                      $"WHERE CUST_ID = '{updatedInfo.CustomerId}';";
             }
 
             var updateEmployee = DatabaseUtils.Instance();
-            return updateEmployee.makeDBQuery(UpdateCustomerQuery);
+            return updateEmployee.MakeDbQuery(updateCustomerQuery);
+            }
+            catch (Exception e)
+            {
+                msg = "An Exception Was Thrown! " + e.ToString();
+                return false;
+            }
+            
         }
 
 
-        private Customer SQLGetCustomerById(string dbQuery)
+        private Customer SqlGetCustomerById(string dbQuery)
         {
             Customer temp = new Customer();
             var dbCon = DatabaseUtils.Instance();
-            dbCon.DatabaseName = DatabaseUtils.databasename;
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
             if (dbCon.IsConnect())
             {
                 var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
@@ -109,20 +135,20 @@ namespace VideoStoreApi.Utils
                 while (reader.Read())
                 {
                     temp.CustomerId = reader.GetInt32($"CUST_ID");
-                    temp.Name_First = reader.GetString($"CUST_Name_First");
-                    temp.Name_Middle_In = reader.GetString($"CUST_Name_Middle_In");
-                    temp.Name_Last = reader.GetString($"CUST_Name_Last");
-                    temp.Add_Line1 = reader.GetString($"CUST_Add_Line1");
+                    temp.NameFirst = reader.GetString($"CUST_Name_First");
+                    temp.NameMiddleIn = reader.GetString($"CUST_Name_Middle_In");
+                    temp.NameLast = reader.GetString($"CUST_Name_Last");
+                    temp.AddLine1 = reader.GetString($"CUST_Add_Line1");
 
                     int location = reader.GetOrdinal($"CUST_Add_Line2");
                     if (!reader.IsDBNull(location))
                     {
-                        temp.Add_Line2 = reader.GetString($"CUST_Add_Line2");
+                        temp.AddLine2 = reader.GetString($"CUST_Add_Line2");
                     }
 
-                    temp.Add_City = reader.GetString($"CUST_Add_City");
-                    temp.Add_State = reader.GetString($"CUST_Add_State");
-                    temp.Add_Zip = reader.GetInt32($"CUST_Add_Zip");
+                    temp.AddCity = reader.GetString($"CUST_Add_City");
+                    temp.AddState = reader.GetString($"CUST_Add_State");
+                    temp.AddZip = reader.GetInt32($"CUST_Add_Zip");
                     temp.PhoneNumber = reader.GetInt64($"CUST_PhoneNumber");
                     temp.Email = reader.GetString($"CUST_Email");
                     temp.Newsletter = reader.GetBoolean($"CUST_Newsletter");
