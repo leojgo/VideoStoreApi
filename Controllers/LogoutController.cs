@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VideoStoreApi.Models;
 using System.Linq;
-using System.Net;
-using Microsoft.EntityFrameworkCore.Query.Expressions.Internal;
-using Microsoft.EntityFrameworkCore.Storage;
 using VideoStoreApi.Utils;
 
 namespace VideoStoreApi.Controllers
@@ -13,11 +9,11 @@ namespace VideoStoreApi.Controllers
     [Route("api/Logout")]
     public class LogoutController : Controller
     {
-        private string _msg = null;
+        private string _msg;
 
-        private readonly EmployeeContext _context;
+        private readonly SessionContext _context;
 
-        public LogoutController(EmployeeContext context)
+        public LogoutController(SessionContext context)
         {
             _context = context;
         }       

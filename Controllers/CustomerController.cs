@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using VideoStoreApi.Models;
-using System.Linq;
-using System.Net;
+﻿using Microsoft.AspNetCore.Mvc;
 using LackLusterVideo.Models;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 using VideoStoreApi.Utils;
 
 namespace VideoStoreApi.Controllers
@@ -14,17 +7,10 @@ namespace VideoStoreApi.Controllers
     [Route("api/Customers")]
     public class CustomerController : Controller
     {
-        private string _msg = null;
+        private string _msg;
         [HttpPost]
         public IActionResult Create([FromBody] Customer newCustInfo)
         {
-            // Checks for nulls and such here...
-
-            //if (credentials.username.ToString() == null || credentials.password == null)
-            //{
-            //    return BadRequest();
-            //}
-
             CustomerUtils newCustUtil = new CustomerUtils();
 
             if (newCustUtil.MakeNewCustomer(newCustInfo, ref _msg))

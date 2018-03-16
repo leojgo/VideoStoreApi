@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using LackLusterVideo.Models;
-using Microsoft.EntityFrameworkCore.Migrations;
 using MySql.Data.MySqlClient;
 
 namespace VideoStoreApi.Utils
@@ -34,7 +30,7 @@ namespace VideoStoreApi.Utils
             }
             catch (Exception e)
             {
-                msg = "An Exception was Thrown! " + e.ToString();
+                msg = "An Exception was Thrown! " + e;
                 return false;
             }
         }
@@ -56,12 +52,12 @@ namespace VideoStoreApi.Utils
                                               $"SET CUST_Active = 0 " + 
                                               $"WHERE CUST_ID = {id};";
 
-                var updateEmployee = DatabaseUtils.Instance();
-                return updateEmployee.MakeDbQuery(disableCustomerQuery);
+                var updateCustomer = DatabaseUtils.Instance();
+                return updateCustomer.MakeDbQuery(disableCustomerQuery);
             }
             catch (Exception e)
             {
-                msg = "An Exception was thrown! " + e.ToString();
+                msg = "An Exception was thrown! " + e;
                 return false;
             }
         }
@@ -115,7 +111,7 @@ namespace VideoStoreApi.Utils
             }
             catch (Exception e)
             {
-                msg = "An Exception Was Thrown! " + e.ToString();
+                msg = "An Exception Was Thrown! " + e;
                 return false;
             }
             
@@ -162,8 +158,7 @@ namespace VideoStoreApi.Utils
             if (temp.CustomerId == 0)
                 //No Match in the DB
                 return null;
-            else
-                return temp;
+            return temp;
         }
     }
 }

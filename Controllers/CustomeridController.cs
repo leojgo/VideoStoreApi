@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VideoStoreApi.Models;
 using System.Linq;
-using System.Net;
 using LackLusterVideo.Models;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 using VideoStoreApi.Utils;
 
 namespace VideoStoreApi.Controllers
@@ -14,7 +10,7 @@ namespace VideoStoreApi.Controllers
     [Route("api/Customers")]
     public class CustomerIdController : Controller
     {
-        private string _msg = null;
+        private string _msg;
 
         private readonly CustomerContext _context;
 

@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 
 namespace VideoStoreApi.Utils
@@ -30,13 +26,13 @@ namespace VideoStoreApi.Utils
         }
 
         public string Password { get; set; }
-        private MySqlConnection _connection = null;
+        private MySqlConnection _connection;
         public MySqlConnection Connection
         {
             get { return _connection; }
         }
 
-        private static DatabaseUtils _instance = null;
+        private static DatabaseUtils _instance;
         public static DatabaseUtils Instance()
         {
             if (_instance == null)
@@ -68,10 +64,8 @@ namespace VideoStoreApi.Utils
                     {
                         return true;
                     }
-                    else
-                    {
-                        return false;
-                    }
+
+                    return false;
                 }
             }
             return true;

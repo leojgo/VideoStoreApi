@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using VideoStoreApi.Models;
 
 namespace VideoStoreApi
@@ -25,8 +19,9 @@ namespace VideoStoreApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<EmployeeContext>(opt => opt.UseInMemoryDatabase("Employees"));
+            services.AddDbContext<SessionContext>(opt => opt.UseInMemoryDatabase("Session"));
             services.AddDbContext<CustomerContext>(opt => opt.UseInMemoryDatabase("Customers"));
+            services.AddDbContext<EmployeeContext>(opt => opt.UseInMemoryDatabase("Employees"));
 // add permissions
 // add movies
             services.AddMvc();

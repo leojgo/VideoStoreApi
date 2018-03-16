@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VideoStoreApi.Models;
 using System.Linq;
-using System.Net;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 using VideoStoreApi.Utils;
 
 namespace VideoStoreApi.Controllers
@@ -13,12 +9,12 @@ namespace VideoStoreApi.Controllers
     [Route("api/Login")]
     public class LoginController : Controller
     {
-        private string _msg = null;
+        private string _msg;
 
 
-        private readonly EmployeeContext _context;
+        private readonly SessionContext _context;
 
-        public LoginController(EmployeeContext context)
+        public LoginController(SessionContext context)
         {
             _context = context;
         }       
@@ -31,7 +27,7 @@ namespace VideoStoreApi.Controllers
             return _context.Employees.ToList();
         }
 
-        [HttpGet("{id}", Name = "GetEmployee")]
+        [HttpGet("{id}", Name = "LoginEmployee")]
         public IActionResult GetById(int id)
         {
             var item = _context.Employees.FirstOrDefault(t => t.EmployeeId == id);
@@ -59,7 +55,7 @@ namespace VideoStoreApi.Controllers
             {
                 _context.Employees.Add(toLogIn);
                 _context.SaveChanges();
-                return CreatedAtRoute("GetEmployee", new {id = toLogIn.EmployeeId}, toLogIn );
+                return CreatedAtRoute("LoginEmployee", new {id = toLogIn.EmployeeId}, toLogIn );
             }
 
             return NotFound(_msg);

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 using VideoStoreApi.Models;
 
@@ -11,13 +9,10 @@ namespace VideoStoreApi.Utils
     {
         public Employee LogIn(int userIdNumber, string password, ref string msg)
         {
+            if (msg == null) throw new ArgumentNullException(nameof(msg));
             try
             {
-                string loginStringQuery = "SELECT * " +
-                                          $"FROM {DatabaseUtils.Databasename}.employeelist " +
-                                          $"WHERE EMP_ID = {userIdNumber};";
-
-                Employee toLogIn = SqlGetEmployee(loginStringQuery);
+                Employee toLogIn = GetEmployeeById(userIdNumber);
 
                 if (PasswordUtils.Verify(password, toLogIn.PwHash))
                 {
@@ -32,12 +27,12 @@ namespace VideoStoreApi.Utils
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                msg = "An Exception was thrown! " + e.ToString();
+                msg = "An Exception was thrown! " + e;
                 return null;
             }
         }
 
-        public bool CreateNewUser(TempEmployee temp)
+        public bool CreateNewUser(TempEmployee temp, ref string msg)
         {
             try
             {
@@ -46,18 +41,18 @@ namespace VideoStoreApi.Utils
                     Employee newEmployee = temp;
                     newEmployee.PwHash = PasswordUtils.Hash(temp.RawPw);
 
-                    string createUserQuery = "INSERT INTO {DatabaseUtils.databasename}.employeelist(EMP_Name_First, EMP_Name_Last, EMP_PW_Hash,EMP_Active, EMP_Type) " +
+                    string createUserQuery = $"INSERT INTO {DatabaseUtils.Databasename}.employeelist(EMP_Name_First, EMP_Name_Last, EMP_PW_Hash,EMP_Active, EMP_Type) " +
                                                 $"VALUES('{newEmployee.FirstName}', '{newEmployee.LastName}','{newEmployee.PwHash}','1','{newEmployee.EmployeeType}');";
                     DatabaseUtils createUser = DatabaseUtils.Instance();
                     return createUser.MakeDbQuery(createUserQuery);
                 }
-                else
-                {
-                    return false;
-                }
+
+                msg = "Password is an invalid format!!!!";
+                return false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                msg = " An Exception Occurred! " + e;
                 return false;
             }
         }
@@ -68,35 +63,59 @@ namespace VideoStoreApi.Utils
             return SqlGetEmployee(loginStringQuery);
         }
 
-        public bool EditEmployeeAccount(TempEmployee updatedEmployee)
+        public bool EditEmployeeAccount(Employee updatedEmployee, ref string msg)
         {
             try
             {
-                if (PasswordUtils.IsPasswordFormatValid(updatedEmployee.RawPw))
-                {
-                    Employee newInfo = updatedEmployee;
-                    newInfo.PwHash = PasswordUtils.Hash(updatedEmployee.RawPw);
+                string updateEmployeeInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.employeelist " +
+                                                    $"SET EMP_Name_First = '{updatedEmployee.FirstName}', " +
+                                                    $"EMP_Name_Last = '{updatedEmployee.LastName}', " +
+                                                    $"EMP_Active = '{Convert.ToInt32(updatedEmployee.Active)}', " +
+                                                    $"EMP_Type = '{updatedEmployee.EmployeeType}' " +
+                                                    $"WHERE EMP_ID = '{updatedEmployee.EmployeeId}';";
 
-                    string updateEmployeeInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.employeelist " +
-                                                     $"SET EMP_Name_First = '{newInfo.FirstName}', " +
-                                                     $"EMP_Name_Last = '{newInfo.LastName}', " +
-                                                     $"EMP_PW_Hash = '{newInfo.PwHash}', " +
-                                                     $"EMP_Active = '{Convert.ToInt32(newInfo.Active)}', " +
-                                                     $"EMP_Type = '{newInfo.EmployeeType}' " +
-                                                     $"WHERE EMP_ID = '{newInfo.EmployeeId}';";
-
-                    var updateEmployee = DatabaseUtils.Instance();
-                    return updateEmployee.MakeDbQuery(updateEmployeeInfoQuery);
-                }
-                else
-                {
-                    return false;
-                }
+                var updateEmployee = DatabaseUtils.Instance();
+                return updateEmployee.MakeDbQuery(updateEmployeeInfoQuery);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                msg = "An Exception Occurred!!" + e;
                 return false;
             }
+        }
+
+        public IEnumerable<Employee> GetAllEmployees()
+        {
+            string getAllemployeesQuery = $"SELECT * " +
+                                          $"FROM {DatabaseUtils.Databasename}.employeelist;";
+            return SqlGetAllEmployees(getAllemployeesQuery);
+        }
+
+        public bool MakeEmployeeInactive(int id, ref string msg)
+        {
+            try
+            {
+                string disableEmployeeQuery = $"UPDATE {DatabaseUtils.Databasename}.employeelist " + 
+                                              $"SET EMP_Active = 0 " + 
+                                              $"WHERE EMP_ID = {id};";
+
+                var updateEmployee = DatabaseUtils.Instance();
+                return updateEmployee.MakeDbQuery(disableEmployeeQuery);
+            }
+            catch (Exception e)
+            {
+                msg = "An Exception was Thrown! " + e;
+                return false;
+            }
+        }
+
+        public Employee GetEmployeeById(int id)
+        {
+            string loginStringQuery = "SELECT * " +
+                                      $"FROM {DatabaseUtils.Databasename}.employeelist " +
+                                      $"WHERE EMP_ID = {id};";
+
+            return SqlGetEmployee(loginStringQuery);
         }
 
 
@@ -219,8 +238,35 @@ namespace VideoStoreApi.Utils
             if (temp.EmployeeId == 0)
                 //No Match in the DB
                 return null;
-            else
-                return temp;
+            return temp;
+        }
+
+        public IEnumerable<Employee> SqlGetAllEmployees(string dbQuery)
+        {
+            List<Employee> allEmployees  = new List<Employee>();
+            var dbCon = DatabaseUtils.Instance();
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
+            if (dbCon.IsConnect())
+            {
+                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    Employee temp = new Employee();
+                    temp.EmployeeId = Convert.ToInt32(reader.GetString("EMP_ID"));
+                    temp.FirstName = reader.GetString("EMP_Name_First");
+                    temp.LastName = reader.GetString("EMP_Name_Last");
+                    temp.PwHash = reader.GetString("EMP_PW_Hash");
+                    temp.Active = Convert.ToBoolean(reader.GetString("EMP_Active"));
+                    temp.EmployeeType = Convert.ToInt32(reader.GetString("EMP_Type"));
+                    allEmployees.Add(temp);
+                }
+
+                dbCon.Close();
+            }
+
+            return allEmployees;
         }
     }
 }
