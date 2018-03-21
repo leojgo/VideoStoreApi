@@ -7,6 +7,6 @@ namespace VideoStoreApi.Models
         public SessionContext(DbContextOptions<SessionContext> options) : base(options)
         {}
 
-        public DbSet<Employee> Employees { get; set; }
+        public DbSet<EmployeeInfoToShare> Employees { get; set; }
     }
 }

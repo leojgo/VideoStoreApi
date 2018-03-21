@@ -21,7 +21,7 @@ namespace VideoStoreApi.Controllers
         //===========================================
 
         [HttpGet]
-        public IEnumerable<Employee> GetAll()
+        public IEnumerable<EmployeeInfoToShare> GetAll()
         {
             return _context.Employees.ToList();
         }
@@ -50,10 +50,25 @@ namespace VideoStoreApi.Controllers
                 return NotFound(_msg);
             }
 
-            _context.Employees.Remove(toLogOut);
+            EmployeeInfoToShare toLogOutClean = RemovePersonalInfo(toLogOut);
+
+            _context.Employees.Remove(toLogOutClean);
             _context.SaveChanges();
             return new NoContentResult();
         }
+
+        public static EmployeeInfoToShare RemovePersonalInfo(Employee toClean)
+        {
+            EmployeeInfoToShare cleanedInfo = new EmployeeInfoToShare();
+            cleanedInfo.Active = toClean.Active;
+            cleanedInfo.EmployeeId = toClean.EmployeeId;
+            cleanedInfo.EmployeeTitle = toClean.EmployeeTitle;
+            cleanedInfo.EmployeeType = toClean.EmployeeType;
+            cleanedInfo.FirstName = toClean.FirstName;
+            cleanedInfo.LastName = toClean.LastName;
+            return cleanedInfo;
+        }
+
     }
 
     public class Logout

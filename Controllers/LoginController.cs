@@ -22,7 +22,7 @@ namespace VideoStoreApi.Controllers
         //===========================================
 
         [HttpGet]
-        public IEnumerable<Employee> GetAll()
+        public IEnumerable<EmployeeInfoToShare> GetAll()
         {
             return _context.Employees.ToList();
         }
@@ -49,16 +49,30 @@ namespace VideoStoreApi.Controllers
             }
 
             EmployeeUtils newEmpUtil = new EmployeeUtils();
-            Employee toLogIn = newEmpUtil.LogIn(credentials.Username, credentials.Password, ref _msg);
+            Employee toClean = newEmpUtil.LogIn(credentials.Username, credentials.Password, ref _msg);
 
-            if (toLogIn != null)
+            if (toClean != null)
             {
-                _context.Employees.Add(toLogIn);
+                EmployeeInfoToShare toLogInClean = RemovePersonalInfo(toClean);
+
+                _context.Employees.Add(toLogInClean);
                 _context.SaveChanges();
-                return CreatedAtRoute("LoginEmployee", new {id = toLogIn.EmployeeId}, toLogIn );
+                return CreatedAtRoute("LoginEmployee", new {id = toLogInClean.EmployeeId}, toLogInClean );
             }
 
             return NotFound(_msg);
+        }
+
+        public static EmployeeInfoToShare RemovePersonalInfo(Employee toClean)
+        {
+            EmployeeInfoToShare cleanedInfo = new EmployeeInfoToShare();
+            cleanedInfo.Active = toClean.Active;
+            cleanedInfo.EmployeeId = toClean.EmployeeId;
+            cleanedInfo.EmployeeTitle = toClean.EmployeeTitle;
+            cleanedInfo.EmployeeType = toClean.EmployeeType;
+            cleanedInfo.FirstName = toClean.FirstName;
+            cleanedInfo.LastName = toClean.LastName;
+            return cleanedInfo;
         }
     }
 

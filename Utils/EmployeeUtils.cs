@@ -9,7 +9,6 @@ namespace VideoStoreApi.Utils
     {
         public Employee LogIn(int userIdNumber, string password, ref string msg)
         {
-            if (msg == null) throw new ArgumentNullException(nameof(msg));
             try
             {
                 Employee toLogIn = GetEmployeeById(userIdNumber);
