@@ -42,7 +42,7 @@ namespace VideoStoreApi.Controllers
         public IActionResult Create([FromBody] Logout credentials)
         {
             EmployeeUtils newEmpUtil = new EmployeeUtils();
-            Employee toLogOut = newEmpUtil.ViewEmployeeAccount(credentials.Username);
+            EmployeeInfoToShare toLogOut = newEmpUtil.ViewEmployeeAccount(credentials.Username);
 
             if (toLogOut == null)
             {
@@ -50,25 +50,10 @@ namespace VideoStoreApi.Controllers
                 return NotFound(_msg);
             }
 
-            EmployeeInfoToShare toLogOutClean = RemovePersonalInfo(toLogOut);
-
-            _context.Employees.Remove(toLogOutClean);
+            _context.Employees.Remove(toLogOut);
             _context.SaveChanges();
             return new NoContentResult();
         }
-
-        public static EmployeeInfoToShare RemovePersonalInfo(Employee toClean)
-        {
-            EmployeeInfoToShare cleanedInfo = new EmployeeInfoToShare();
-            cleanedInfo.Active = toClean.Active;
-            cleanedInfo.EmployeeId = toClean.EmployeeId;
-            cleanedInfo.EmployeeTitle = toClean.EmployeeTitle;
-            cleanedInfo.EmployeeType = toClean.EmployeeType;
-            cleanedInfo.FirstName = toClean.FirstName;
-            cleanedInfo.LastName = toClean.LastName;
-            return cleanedInfo;
-        }
-
     }
 
     public class Logout

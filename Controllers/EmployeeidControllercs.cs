@@ -5,13 +5,13 @@ using VideoStoreApi.Utils;
 namespace VideoStoreApi.Controllers
 {
     [Route("api/Employee")]
-    public class EmployeesidController : Controller
+    public class EmployeeidController : Controller
     {
         private string _msg;
 
         private readonly EmployeeContext _context;
 
-        public EmployeesidController(EmployeeContext context)
+        public EmployeeidController(EmployeeContext context)
         {
             _context = context;
         }
@@ -19,10 +19,17 @@ namespace VideoStoreApi.Controllers
         //===========================================
 
         [HttpGet("{id}")]
-        public Employee GetEmployeeInfoById(int id)
+        public IActionResult GetEmployeeInfoById(int id)
         {
             EmployeeUtils newEmployeeUtils = new EmployeeUtils();
-            return newEmployeeUtils.GetEmployeeById(id);
+            EmployeeInfoToShare empToClean = newEmployeeUtils.GetEmployeeById(id);
+            if (empToClean != null)
+            {
+                return Ok(empToClean);
+            }
+
+            _msg = $"Couldnt find an Employee with the ID: {id}";
+            return NotFound(_msg);
         }
 
 
@@ -45,18 +52,5 @@ namespace VideoStoreApi.Controllers
             _msg = "Invalid Input!!!";
             return BadRequest(_msg);
         }
-
-        [HttpDelete("{id}")]
-        public IActionResult DeleteEmployee(int id)
-        {
-            EmployeeUtils newEmployeeUtils = new EmployeeUtils();
-            if (newEmployeeUtils.MakeEmployeeInactive(id, ref _msg))
-            {
-                return NoContent();
-            }
-
-            return NotFound(_msg);
-        }
     }
-
 }

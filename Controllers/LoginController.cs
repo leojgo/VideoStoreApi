@@ -49,30 +49,16 @@ namespace VideoStoreApi.Controllers
             }
 
             EmployeeUtils newEmpUtil = new EmployeeUtils();
-            Employee toClean = newEmpUtil.LogIn(credentials.Username, credentials.Password, ref _msg);
+            EmployeeInfoToShare newEmployee = newEmpUtil.LogIn(credentials.Username, credentials.Password, ref _msg);
 
-            if (toClean != null)
+            if (newEmployee != null)
             {
-                EmployeeInfoToShare toLogInClean = RemovePersonalInfo(toClean);
-
-                _context.Employees.Add(toLogInClean);
+                _context.Employees.Add(newEmployee);
                 _context.SaveChanges();
-                return CreatedAtRoute("LoginEmployee", new {id = toLogInClean.EmployeeId}, toLogInClean );
+                return CreatedAtRoute("LoginEmployee", new {id = newEmployee.EmployeeId}, newEmployee );
             }
 
             return NotFound(_msg);
-        }
-
-        public static EmployeeInfoToShare RemovePersonalInfo(Employee toClean)
-        {
-            EmployeeInfoToShare cleanedInfo = new EmployeeInfoToShare();
-            cleanedInfo.Active = toClean.Active;
-            cleanedInfo.EmployeeId = toClean.EmployeeId;
-            cleanedInfo.EmployeeTitle = toClean.EmployeeTitle;
-            cleanedInfo.EmployeeType = toClean.EmployeeType;
-            cleanedInfo.FirstName = toClean.FirstName;
-            cleanedInfo.LastName = toClean.LastName;
-            return cleanedInfo;
         }
     }
 

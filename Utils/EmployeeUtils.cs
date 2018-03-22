@@ -7,17 +7,18 @@ namespace VideoStoreApi.Utils
 {
     public class EmployeeUtils
     {
-        public Employee LogIn(int userIdNumber, string password, ref string msg)
+        public EmployeeInfoToShare LogIn(int userIdNumber, string password, ref string msg)
         {
             try
             {
-                Employee toLogIn = GetEmployeeById(userIdNumber);
+                Employee toLogIn = GetEmployeeById_RAW(userIdNumber);
 
                 if (PasswordUtils.Verify(password, toLogIn.PwHash))
                 {
-                    GetEmployeeTitle(toLogIn);
+                    toLogIn.EmployeeTitle = GetEmployeeTitle(toLogIn);
                     msg = "Login Successful!";
-                    return toLogIn;
+
+                    return GetEmployeeById(toLogIn.EmployeeId);
                 }
 
                 msg = "Login or Password were incorrect!";
@@ -29,6 +30,17 @@ namespace VideoStoreApi.Utils
                 msg = "An Exception was thrown! " + e;
                 return null;
             }
+        }
+        public static EmployeeInfoToShare RemovePersonalInfo(Employee toClean)
+        {
+            EmployeeInfoToShare cleanedInfo = new EmployeeInfoToShare();
+            cleanedInfo.Active = toClean.Active;
+            cleanedInfo.EmployeeId = toClean.EmployeeId;
+            cleanedInfo.EmployeeTitle = toClean.EmployeeTitle;
+            cleanedInfo.EmployeeType = toClean.EmployeeType;
+            cleanedInfo.FirstName = toClean.FirstName;
+            cleanedInfo.LastName = toClean.LastName;
+            return cleanedInfo;
         }
 
         public bool CreateNewUser(TempEmployee temp, ref string msg)
@@ -56,10 +68,11 @@ namespace VideoStoreApi.Utils
             }
         }
 
-        public Employee ViewEmployeeAccount(int empId)
+        public EmployeeInfoToShare ViewEmployeeAccount(int empId)
+
         {
             string loginStringQuery = $"SELECT * FROM {DatabaseUtils.Databasename}.employeelist WHERE EMP_ID = {empId};";
-            return SqlGetEmployee(loginStringQuery);
+            return RemovePersonalInfo(SqlGetEmployee(loginStringQuery));
         }
 
         public bool EditEmployeeAccount(EmployeeInfoToShare updatedEmployee, ref string msg)
@@ -83,43 +96,35 @@ namespace VideoStoreApi.Utils
             }
         }
 
-        public IEnumerable<Employee> GetAllEmployees()
+        public IEnumerable<EmployeeInfoToShare> GetAllEmployees()
         {
             string getAllemployeesQuery = $"SELECT * " +
                                           $"FROM {DatabaseUtils.Databasename}.employeelist;";
-            return SqlGetAllEmployees(getAllemployeesQuery);
+            List<Employee> allEmployees = SqlGetAllEmployees(getAllemployeesQuery);
+            List<EmployeeInfoToShare> cleanedEmployeeInfo = new List<EmployeeInfoToShare>();
+            foreach (var Employee in allEmployees)
+            {
+                cleanedEmployeeInfo.Add(RemovePersonalInfo(Employee));
+            }
+
+            return cleanedEmployeeInfo;
         }
 
-        public bool MakeEmployeeInactive(int id, ref string msg)
-        {
-            try
-            {
-                string disableEmployeeQuery = $"UPDATE {DatabaseUtils.Databasename}.employeelist " + 
-                                              $"SET EMP_Active = 0 " + 
-                                              $"WHERE EMP_ID = {id};";
-
-                var updateEmployee = DatabaseUtils.Instance();
-                return updateEmployee.MakeDbQuery(disableEmployeeQuery);
-            }
-            catch (Exception e)
-            {
-                msg = "An Exception was Thrown! " + e;
-                return false;
-            }
-        }
-
-        public Employee GetEmployeeById(int id)
+        public EmployeeInfoToShare GetEmployeeById(int id)
         {
             string loginStringQuery = "SELECT * " +
                                       $"FROM {DatabaseUtils.Databasename}.employeelist " +
                                       $"WHERE EMP_ID = {id};";
 
-            return SqlGetEmployee(loginStringQuery);
+
+            Employee toGet = SqlGetEmployee(loginStringQuery);
+            toGet.EmployeeTitle = GetEmployeeTitle(toGet);
+
+            return RemovePersonalInfo(toGet);
         }
 
-
         //PRIVATES GO BELOW!!!!
-        private void GetEmployeeTitle(Employee empToCheck)
+        private string GetEmployeeTitle(Employee empToCheck)
         {
             try
             {
@@ -127,10 +132,11 @@ namespace VideoStoreApi.Utils
                                             $"FROM {DatabaseUtils.Databasename}.employeetitles " +
                                             $"WHERE EMP_LVL = {empToCheck.EmployeeType}";
 
-                empToCheck.EmployeeTitle = SqlGetEmployeeTitle(employerTitleQuery);
+                return SqlGetEmployeeTitle(employerTitleQuery);
             }
             catch
             {
+                return null;
             }
         }
 
@@ -168,6 +174,19 @@ namespace VideoStoreApi.Utils
                 dbCon.Close();
             }
             return employeeTitle;
+        }
+
+        private Employee GetEmployeeById_RAW(int id)
+        {
+            string loginStringQuery = "SELECT * " +
+                                      $"FROM {DatabaseUtils.Databasename}.employeelist " +
+                                      $"WHERE EMP_ID = {id};";
+
+
+            Employee toGet = SqlGetEmployee(loginStringQuery);
+            toGet.EmployeeTitle = GetEmployeeTitle(toGet);
+
+            return toGet;
         }
 
         //private Permission SqlGetEmployeePermissions(string dbQuery, int lookupKey)
@@ -211,6 +230,8 @@ namespace VideoStoreApi.Utils
         //    return temp;
         //}
 
+
+        //SQL Queries go Below!
         public Employee SqlGetEmployee(string dbQuery)
         {
             Employee temp = new Employee();
@@ -240,7 +261,7 @@ namespace VideoStoreApi.Utils
             return temp;
         }
 
-        public IEnumerable<Employee> SqlGetAllEmployees(string dbQuery)
+        public List<Employee> SqlGetAllEmployees(string dbQuery)
         {
             List<Employee> allEmployees  = new List<Employee>();
             var dbCon = DatabaseUtils.Instance();
