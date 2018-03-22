@@ -40,6 +40,7 @@ namespace VideoStoreApi.Utils
             cleanedInfo.EmployeeType = toClean.EmployeeType;
             cleanedInfo.FirstName = toClean.FirstName;
             cleanedInfo.LastName = toClean.LastName;
+            cleanedInfo.PhoneNumber = toClean.PhoneNumber;
             return cleanedInfo;
         }
 
@@ -52,8 +53,8 @@ namespace VideoStoreApi.Utils
                     Employee newEmployee = temp;
                     newEmployee.PwHash = PasswordUtils.Hash(temp.RawPw);
 
-                    string createUserQuery = $"INSERT INTO {DatabaseUtils.Databasename}.employeelist(EMP_Name_First, EMP_Name_Last, EMP_PW_Hash,EMP_Active, EMP_Type) " +
-                                                $"VALUES('{newEmployee.FirstName}', '{newEmployee.LastName}','{newEmployee.PwHash}','1','{newEmployee.EmployeeType}');";
+                    string createUserQuery = $"INSERT INTO {DatabaseUtils.Databasename}.employeelist(EMP_Name_First, EMP_Name_Last, EMP_PW_Hash,EMP_Active, EMP_Type, EMP_PhoneNumber) " +
+                                                $"VALUES('{newEmployee.FirstName}', '{newEmployee.LastName}','{newEmployee.PwHash}','1','{newEmployee.EmployeeType}',{newEmployee.PhoneNumber});";
                     DatabaseUtils createUser = DatabaseUtils.Instance();
                     return createUser.MakeDbQuery(createUserQuery);
                 }
@@ -83,7 +84,8 @@ namespace VideoStoreApi.Utils
                                                     $"SET EMP_Name_First = '{updatedEmployee.FirstName}', " +
                                                     $"EMP_Name_Last = '{updatedEmployee.LastName}', " +
                                                     $"EMP_Active = '{Convert.ToInt32(updatedEmployee.Active)}', " +
-                                                    $"EMP_Type = '{updatedEmployee.EmployeeType}' " +
+                                                    $"EMP_Type = '{updatedEmployee.EmployeeType}', " +
+                                                    $"EMP_PhoneNumber = '{updatedEmployee.PhoneNumber}' " + 
                                                     $"WHERE EMP_ID = '{updatedEmployee.EmployeeId}';";
 
                 var updateEmployee = DatabaseUtils.Instance();
@@ -244,12 +246,13 @@ namespace VideoStoreApi.Utils
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    temp.EmployeeId = Convert.ToInt32(reader.GetString("EMP_ID"));
+                    temp.EmployeeId = reader.GetInt32("EMP_ID");
                     temp.FirstName = reader.GetString("EMP_Name_First");
                     temp.LastName = reader.GetString("EMP_Name_Last");
                     temp.PwHash = reader.GetString("EMP_PW_Hash");
-                    temp.Active = Convert.ToBoolean(reader.GetString("EMP_Active"));
-                    temp.EmployeeType = Convert.ToInt32(reader.GetString("EMP_Type"));
+                    temp.Active = reader.GetBoolean("EMP_Active");
+                    temp.EmployeeType = reader.GetInt32("EMP_Type");
+                    temp.PhoneNumber = reader.GetInt64("EMP_PhoneNumber");
                 }
 
                 dbCon.Close();
@@ -274,12 +277,13 @@ namespace VideoStoreApi.Utils
                 while (reader.Read())
                 {
                     Employee temp = new Employee();
-                    temp.EmployeeId = Convert.ToInt32(reader.GetString("EMP_ID"));
+                    temp.EmployeeId = reader.GetInt32("EMP_ID");
                     temp.FirstName = reader.GetString("EMP_Name_First");
                     temp.LastName = reader.GetString("EMP_Name_Last");
                     temp.PwHash = reader.GetString("EMP_PW_Hash");
-                    temp.Active = Convert.ToBoolean(reader.GetString("EMP_Active"));
-                    temp.EmployeeType = Convert.ToInt32(reader.GetString("EMP_Type"));
+                    temp.Active = reader.GetBoolean("EMP_Active");
+                    temp.EmployeeType = reader.GetInt32("EMP_Type");
+                    temp.PhoneNumber = reader.GetInt64("EMP_PhoneNumber");
                     allEmployees.Add(temp);
                 }
 

@@ -12,6 +12,7 @@ namespace VideoStoreApi.Models
         public string PwHash { get; set; }
         public bool Active { get; set; }
         public string EmployeeTitle { get; set; }
+        public long PhoneNumber { get; set; }
     }
 
     public class TempEmployee : Employee
@@ -28,5 +29,7 @@ namespace VideoStoreApi.Models
         public int EmployeeType { get; set; }
         public bool Active { get; set; }
         public string EmployeeTitle { get; set; }
+        public long PhoneNumber { get; set; }
     }
 }
+
