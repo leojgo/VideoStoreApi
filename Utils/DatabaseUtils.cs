@@ -121,5 +121,70 @@ namespace VideoStoreApi.Utils
 
             return false;
         }
+
+
+        public int MakeDbQuery(string dbQuery, bool getLastKey)
+        {
+            int key = -1;
+            var dbCon = DatabaseUtils.Instance();
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
+            if (dbCon.IsConnect())
+            {
+                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                    dbQuery = null;
+                    if (getLastKey)
+                    {
+                        key = SQL_GetLastInsertedId();
+                    }
+                    dbCon.Close();
+                    return key;
+                }
+                catch (Exception e)
+                {
+                    dbQuery = null;
+                    dbCon.Close();
+                    return key;
+                }
+
+                //}
+
+                dbQuery = null;
+                dbCon.Close();
+            }
+
+            return key;
+        }
+
+
+        private int SQL_GetLastInsertedId()
+        {
+            string dbQuery = "SELECT LAST_INSERT_ID();";
+            int LastInsertedKey = -1;
+            var dbCon = DatabaseUtils.Instance();
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
+            if (dbCon.IsConnect())
+            {
+                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+                try
+                {
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        LastInsertedKey = reader.GetInt32(0);
+                    }
+                    return LastInsertedKey;
+                }
+                catch (Exception e)
+                {
+                    return LastInsertedKey;
+                }
+            }
+
+            return LastInsertedKey;
+        }
+
     }
 }

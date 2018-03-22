@@ -6,7 +6,7 @@ namespace VideoStoreApi.Utils
 {
     public class CustomerUtils
     {
-        public bool MakeNewCustomer(Customer toAdd, ref string msg)
+        public int MakeNewCustomer(Customer toAdd, ref string msg)
         {
             try
             {
@@ -16,22 +16,22 @@ namespace VideoStoreApi.Utils
                 {
                     createUserQuery =
                         $"INSERT INTO {DatabaseUtils.Databasename}.customers(CUST_Name_First, CUST_Name_Middle_In, CUST_Name_Last, CUST_Add_Line1, CUST_Add_Line2, CUST_Add_City, CUST_Add_State, CUST_Add_Zip, CUST_PhoneNumber, CUST_Email, CUST_Newsletter, CUST_AccountBalance, CUST_Active ) " +
-                        $"VALUES('{toAdd.NameFirst}', '{toAdd.NameMiddleIn}', '{toAdd.NameLast}', '{toAdd.AddLine1}', null , '{toAdd.AddCity}', '{toAdd.AddState}', '{toAdd.AddZip}', '{toAdd.PhoneNumber}', '{toAdd.Email}', {toAdd.Newsletter}, '{toAdd.AccountBalance}', {toAdd.Active});";
+                        $"VALUES('{toAdd.NameFirst}', '{toAdd.NameMiddleIn}', '{toAdd.NameLast}', '{toAdd.AddLine1}', null , '{toAdd.AddCity}', '{toAdd.AddState}', '{toAdd.AddZip}', '{toAdd.PhoneNumber}', '{toAdd.Email}', {toAdd.Newsletter}, '{toAdd.AccountBalance}', {toAdd.Active})";
                 }
                 else
                 {
                     createUserQuery =
                         $"INSERT INTO {DatabaseUtils.Databasename}.customers(CUST_Name_First, CUST_Name_Middle_In, CUST_Name_Last, CUST_Add_Line1, CUST_Add_Line2, CUST_Add_City, CUST_Add_State, CUST_Add_Zip, CUST_PhoneNumber, CUST_Email, CUST_Newsletter, CUST_AccountBalance, CUST_Active ) " +
-                        $"VALUES('{toAdd.NameFirst}', '{toAdd.NameMiddleIn}', '{toAdd.NameLast}', '{toAdd.AddLine1}', '{toAdd.AddLine2}', '{toAdd.AddCity}', '{toAdd.AddState}', '{toAdd.AddZip}', '{toAdd.PhoneNumber}', '{toAdd.Email}', {toAdd.Newsletter}, '{toAdd.AccountBalance}', {toAdd.Active});";
+                        $"VALUES('{toAdd.NameFirst}', '{toAdd.NameMiddleIn}', '{toAdd.NameLast}', '{toAdd.AddLine1}', '{toAdd.AddLine2}', '{toAdd.AddCity}', '{toAdd.AddState}', '{toAdd.AddZip}', '{toAdd.PhoneNumber}', '{toAdd.Email}', {toAdd.Newsletter}, '{toAdd.AccountBalance}', {toAdd.Active})";
                 }
 
-                DatabaseUtils createCustomer = DatabaseUtils.Instance();
-                return createCustomer.MakeDbQuery(createUserQuery);
+                var makeCustomer = DatabaseUtils.Instance();
+                return makeCustomer.MakeDbQuery(createUserQuery,true);
             }
             catch (Exception e)
             {
                 msg = "An Exception was Thrown! " + e;
-                return false;
+                return -1;
             }
         }
 
@@ -48,9 +48,9 @@ namespace VideoStoreApi.Utils
         {
             try
             {
-                string disableCustomerQuery = $"UPDATE {DatabaseUtils.Databasename}.customers " + 
-                                              $"SET CUST_Active = 0 " + 
-                                              $"WHERE CUST_ID = {id};";
+                string disableCustomerQuery = $"UPDATE {DatabaseUtils.Databasename}.customers " +
+                                              $"SET CUST_Active = 0 " +
+                                              $"WHERE CUST_ID = {id}";
 
                 var updateCustomer = DatabaseUtils.Instance();
                 return updateCustomer.MakeDbQuery(disableCustomerQuery);
@@ -116,7 +116,6 @@ namespace VideoStoreApi.Utils
             }
             
         }
-
 
         private Customer SqlGetCustomerById(string dbQuery)
         {
