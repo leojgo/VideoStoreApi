@@ -20,15 +20,18 @@ namespace VideoStoreApi.Controllers
         //===========================================
 
         [HttpGet]
-        public IEnumerable<Employee> GetAll()
+        public IEnumerable<EmployeeInfoToShare> GetAll()
         {
-            //return _context.Employees.ToList();
-            IEnumerable<Employee> allEmployees;
-
             EmployeeUtils newEmployeeUtils = new EmployeeUtils();
-            allEmployees = newEmployeeUtils.GetAllEmployees();
+            IEnumerable<Employee> allEmployees = newEmployeeUtils.GetAllEmployees();
+            List<EmployeeInfoToShare> CleanedEmployees = new List<EmployeeInfoToShare>();
 
-            return allEmployees;
+            foreach (var employee in allEmployees)
+            {
+                CleanedEmployees.Add(RemovePersonalInfo(employee));
+            }
+
+            return CleanedEmployees;
         }
 
         [HttpPost]
@@ -47,6 +50,18 @@ namespace VideoStoreApi.Controllers
             }
 
             return BadRequest(_msg);
+        }
+
+        public static EmployeeInfoToShare RemovePersonalInfo(Employee toClean)
+        {
+            EmployeeInfoToShare cleanedInfo = new EmployeeInfoToShare();
+            cleanedInfo.Active = toClean.Active;
+            cleanedInfo.EmployeeId = toClean.EmployeeId;
+            cleanedInfo.EmployeeTitle = toClean.EmployeeTitle;
+            cleanedInfo.EmployeeType = toClean.EmployeeType;
+            cleanedInfo.FirstName = toClean.FirstName;
+            cleanedInfo.LastName = toClean.LastName;
+            return cleanedInfo;
         }
     }
 
