@@ -26,14 +26,15 @@ namespace VideoStoreApi.Controllers
         }
 
 
-        [HttpPost]
-        public IActionResult UpdateInfo([FromBody] Employee updatedInfo)  //// THIS DOESNT MAP RIGHT!!
+        [HttpPost("{id}")]
+        public IActionResult UpdateInfo([FromBody] EmployeeInfoToShare updatedInfo, int id)
         {
             if (updatedInfo != null)
             {
                 EmployeeUtils newEmployeeUtils = new EmployeeUtils();
                 if (updatedInfo.FirstName != null)
                 {
+                    updatedInfo.EmployeeId = id;
                     if (newEmployeeUtils.EditEmployeeAccount(updatedInfo, ref _msg))
                     {
                         return NoContent();
@@ -56,7 +57,6 @@ namespace VideoStoreApi.Controllers
 
             return NotFound(_msg);
         }
-
     }
 
 }

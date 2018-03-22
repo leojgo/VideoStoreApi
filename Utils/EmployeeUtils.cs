@@ -62,7 +62,7 @@ namespace VideoStoreApi.Utils
             return SqlGetEmployee(loginStringQuery);
         }
 
-        public bool EditEmployeeAccount(Employee updatedEmployee, ref string msg)
+        public bool EditEmployeeAccount(EmployeeInfoToShare updatedEmployee, ref string msg)
         {
             try
             {
