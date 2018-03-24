@@ -23,7 +23,7 @@ namespace VideoStoreApi
             services.AddDbContext<CustomerContext>(opt => opt.UseInMemoryDatabase("Customers"));
             services.AddDbContext<EmployeeContext>(opt => opt.UseInMemoryDatabase("Employees"));
             services.AddDbContext<MovieContext>(opt => opt.UseInMemoryDatabase("Movies"));
-// add permissions
+            services.AddDbContext<PermissionContext>(opt => opt.UseInMemoryDatabase("Permissions"));
             services.AddMvc();
         }
 

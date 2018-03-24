@@ -9,7 +9,7 @@ namespace VideoStoreApi.Controllers
     [Route("api/Logout")]
     public class LogoutController : Controller
     {
-        private string _msg;
+        
 
         private readonly SessionContext _context;
 
@@ -32,8 +32,7 @@ namespace VideoStoreApi.Controllers
             var item = _context.Employees.FirstOrDefault(t => t.EmployeeId == id);
             if (item == null)
             {
-                _msg = "Employee was Not Found!";
-                return NotFound(_msg);
+                return NotFound("Employee was Not Found!");
             }
             return new ObjectResult(item);
         }
@@ -46,8 +45,7 @@ namespace VideoStoreApi.Controllers
 
             if (toLogOut == null)
             {
-                _msg = "Employee was Not Found!";
-                return NotFound(_msg);
+                return NotFound("Employee was Not Found!");
             }
 
             _context.Employees.Remove(toLogOut);

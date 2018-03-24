@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VideoStoreApi.Models;
 using System.Linq;
-using LackLusterVideo.Models;
 using VideoStoreApi.Utils;
 
 namespace VideoStoreApi.Controllers
@@ -10,8 +10,6 @@ namespace VideoStoreApi.Controllers
     [Route("api/Customers")]
     public class CustomerIdController : Controller
     {
-        private string _msg;
-
         private readonly CustomerContext _context;
 
         public CustomerIdController(CustomerContext context)
@@ -36,8 +34,7 @@ namespace VideoStoreApi.Controllers
 
             if (item == null)
             {
-                _msg = "Customer Was Not Found";
-                return NotFound();
+                return NotFound("Customer Was Not Found");
             }
 
             return new ObjectResult(item);
@@ -47,13 +44,20 @@ namespace VideoStoreApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteCustomer(int id)
         {
-            CustomerUtils newCustUtil = new CustomerUtils();
-            if (newCustUtil.MakeCustomerInactive(id, ref _msg))
+            try
             {
-                return NoContent();
-            }
+                CustomerUtils newCustUtil = new CustomerUtils();
+                if (newCustUtil.MakeCustomerInactive(id))
+                {
+                    return NoContent();
+                }
 
-            return NotFound(_msg);
+                return NotFound($"Couldnt find the Customer {id} you specified!");
+            }
+            catch (Exception e)
+            {
+                return NotFound($"Couldnt find the Customer {id} you specified!" + e);
+            }
         }
 
 
@@ -61,22 +65,26 @@ namespace VideoStoreApi.Controllers
         [HttpPost("{id}")]
         public IActionResult UpdateInfo([FromBody] Customer customer)
         {
-            //if (credentials.username.ToString() == null || credentials.password == null)
-            //{
-            //    return BadRequest();
-            //}
 
             CustomerUtils newCustUtil = new CustomerUtils();
-            bool result = newCustUtil.UpdateCustomer(customer, ref _msg);
-
-            if (result)
+            try
             {
-                //SUCCESS
-                _context.Customers.Add(customer);
-                _context.SaveChanges();
-                return CreatedAtRoute("GetCustomer", new {id = customer.CustomerId}, customer);
+                bool result = newCustUtil.UpdateCustomer(customer);
+
+                if (result)
+                {
+                    //SUCCESS
+                    _context.Customers.Add(customer);
+                    _context.SaveChanges();
+                    return CreatedAtRoute("GetCustomer", new {id = customer.CustomerId}, customer);
+                }
+                return BadRequest($"Couldn't Update Customer!");
             }
-            return BadRequest(_msg);
+            catch (Exception e)
+            {
+                return BadRequest($"Couldn't Update Customer!" + e);
+            }
+            
 
         }
     }

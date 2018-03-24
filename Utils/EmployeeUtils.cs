@@ -7,29 +7,17 @@ namespace VideoStoreApi.Utils
 {
     public class EmployeeUtils
     {
-        public EmployeeInfoToShare LogIn(int userIdNumber, string password, ref string msg)
+        public EmployeeInfoToShare LogIn(int userIdNumber, string password)
         {
-            try
+            Employee toLogIn = GetEmployeeById_RAW(userIdNumber);
+
+            if (PasswordUtils.Verify(password, toLogIn.PwHash))
             {
-                Employee toLogIn = GetEmployeeById_RAW(userIdNumber);
+                toLogIn.EmployeeTitle = GetEmployeeTitle(toLogIn);
 
-                if (PasswordUtils.Verify(password, toLogIn.PwHash))
-                {
-                    toLogIn.EmployeeTitle = GetEmployeeTitle(toLogIn);
-                    msg = "Login Successful!";
-
-                    return GetEmployeeById(toLogIn.EmployeeId);
-                }
-
-                msg = "Login or Password were incorrect!";
-                return null;
+                return GetEmployeeById(toLogIn.EmployeeId);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                msg = "An Exception was thrown! " + e;
-                return null;
-            }
+            return null;
         }
         public static EmployeeInfoToShare RemovePersonalInfo(Employee toClean)
         {
@@ -44,29 +32,19 @@ namespace VideoStoreApi.Utils
             return cleanedInfo;
         }
 
-        public bool CreateNewUser(TempEmployee temp, ref string msg)
+        public bool CreateNewUser(TempEmployee temp)
         {
-            try
+            if (PasswordUtils.IsPasswordFormatValid(temp.RawPw))
             {
-                if (PasswordUtils.IsPasswordFormatValid(temp.RawPw))
-                {
-                    Employee newEmployee = temp;
-                    newEmployee.PwHash = PasswordUtils.Hash(temp.RawPw);
+                Employee newEmployee = temp;
+                newEmployee.PwHash = PasswordUtils.Hash(temp.RawPw);
 
-                    string createUserQuery = $"INSERT INTO {DatabaseUtils.Databasename}.employeelist(EMP_Name_First, EMP_Name_Last, EMP_PW_Hash,EMP_Active, EMP_Type, EMP_PhoneNumber) " +
-                                                $"VALUES('{newEmployee.FirstName}', '{newEmployee.LastName}','{newEmployee.PwHash}','1','{newEmployee.EmployeeType}',{newEmployee.PhoneNumber});";
-                    DatabaseUtils createUser = DatabaseUtils.Instance();
-                    return createUser.MakeDbQuery(createUserQuery);
-                }
-
-                msg = "Password is an invalid format!!!!";
-                return false;
+                string createUserQuery = $"INSERT INTO {DatabaseUtils.Databasename}.employeelist(EMP_Name_First, EMP_Name_Last, EMP_PW_Hash,EMP_Active, EMP_Type, EMP_PhoneNumber) " +
+                                            $"VALUES('{newEmployee.FirstName}', '{newEmployee.LastName}','{newEmployee.PwHash}','1','{newEmployee.EmployeeType}',{newEmployee.PhoneNumber});";
+                DatabaseUtils createUser = DatabaseUtils.Instance();
+                return createUser.MakeDbQuery(createUserQuery);
             }
-            catch (Exception e)
-            {
-                msg = " An Exception Occurred! " + e;
-                return false;
-            }
+            return false;
         }
 
         public EmployeeInfoToShare ViewEmployeeAccount(int empId)
@@ -76,26 +54,18 @@ namespace VideoStoreApi.Utils
             return RemovePersonalInfo(SqlGetEmployee(loginStringQuery));
         }
 
-        public bool EditEmployeeAccount(EmployeeInfoToShare updatedEmployee, ref string msg)
+        public bool EditEmployeeAccount(EmployeeInfoToShare updatedEmployee)
         {
-            try
-            {
-                string updateEmployeeInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.employeelist " +
-                                                    $"SET EMP_Name_First = '{updatedEmployee.FirstName}', " +
-                                                    $"EMP_Name_Last = '{updatedEmployee.LastName}', " +
-                                                    $"EMP_Active = '{Convert.ToInt32(updatedEmployee.Active)}', " +
-                                                    $"EMP_Type = '{updatedEmployee.EmployeeType}', " +
-                                                    $"EMP_PhoneNumber = '{updatedEmployee.PhoneNumber}' " + 
-                                                    $"WHERE EMP_ID = '{updatedEmployee.EmployeeId}';";
+            string updateEmployeeInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.employeelist " +
+                                                $"SET EMP_Name_First = '{updatedEmployee.FirstName}', " +
+                                                $"EMP_Name_Last = '{updatedEmployee.LastName}', " +
+                                                $"EMP_Active = '{Convert.ToInt32(updatedEmployee.Active)}', " +
+                                                $"EMP_Type = '{updatedEmployee.EmployeeType}', " +
+                                                $"EMP_PhoneNumber = '{updatedEmployee.PhoneNumber}' " + 
+                                                $"WHERE EMP_ID = '{updatedEmployee.EmployeeId}';";
 
-                var updateEmployee = DatabaseUtils.Instance();
-                return updateEmployee.MakeDbQuery(updateEmployeeInfoQuery);
-            }
-            catch (Exception e)
-            {
-                msg = "An Exception Occurred!!" + e;
-                return false;
-            }
+            var updateEmployee = DatabaseUtils.Instance();
+            return updateEmployee.MakeDbQuery(updateEmployeeInfoQuery);
         }
 
         public IEnumerable<EmployeeInfoToShare> GetAllEmployees()

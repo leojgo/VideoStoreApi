@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using VideoStoreApi.Models;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using LackLusterVideo.Models;
 using VideoStoreApi.Utils;
 
 namespace VideoStoreApi.Controllers
@@ -12,7 +11,7 @@ namespace VideoStoreApi.Controllers
     [Route("api/Movies")]
     public class MovieIdController : Controller
     {
-        private string _msg;
+        
 
         private readonly MovieContext _context;
 
@@ -26,46 +25,41 @@ namespace VideoStoreApi.Controllers
         {
             MovieUtils newMovieUtils = new MovieUtils();
 
-            Movie lookedUpMovie = newMovieUtils.GetMovieById(id, ref _msg);
+            Movie lookedUpMovie = newMovieUtils.GetMovieById(id);
             try
             {
                 if (lookedUpMovie.Title != null)
                 {
                     return new ObjectResult(lookedUpMovie);
                 }
-
-                _msg = $"There was no movie '{id}' found!";
-                return NotFound(_msg);
+                return NotFound($"There was no movie '{id}' found!");
             }
             catch (Exception e)
             {
-                return StatusCode(500);
+                return StatusCode(500, $"Couldnt find the movie you Specified ({id})! " + e);
             }
         }
 
 
         [HttpPost("{id}")]
-        public IActionResult UpdateMovieInfo([FromBody]Movie UpdatedMovieInfo, long id)
+        public IActionResult UpdateMovieInfo([FromBody]Movie updatedMovieInfo, long id)
         {
             try
             {
                 MovieUtils newMovieUtils = new MovieUtils();
-                UpdatedMovieInfo.MovieId = id;
-                bool result = newMovieUtils.UpdateMovieInfo(UpdatedMovieInfo, ref _msg);
+                updatedMovieInfo.MovieId = id;
+                bool result = newMovieUtils.UpdateMovieInfo(updatedMovieInfo);
 
                 if (result)
                 {
-                    return StatusCode(200);
+                    return Ok();
                 }
-
-                _msg = "Couldnt Update the Movie Info! :'( ";
-                return BadRequest(_msg);
+                return BadRequest("Couldnt Update the Movie Info! :'( ");
 
             }
             catch (Exception e)
             {
-                _msg = "Something Broke while updating the Movie Info!! " + e;
-                return BadRequest(_msg);
+                return BadRequest("Something Broke while updating the Movie Info!! " + e);
             }
         }
     }

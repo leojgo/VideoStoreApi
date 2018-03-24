@@ -7,8 +7,6 @@ namespace VideoStoreApi.Controllers
     [Route("api/Employee")]
     public class EmployeeidController : Controller
     {
-        private string _msg;
-
         private readonly EmployeeContext _context;
 
         public EmployeeidController(EmployeeContext context)
@@ -28,8 +26,7 @@ namespace VideoStoreApi.Controllers
                 return Ok(empToClean);
             }
 
-            _msg = $"Couldnt find an Employee with the ID: {id}";
-            return NotFound(_msg);
+            return NotFound($"Couldnt find an Employee with the ID: {id}");
         }
 
 
@@ -42,15 +39,13 @@ namespace VideoStoreApi.Controllers
                 if (updatedInfo.FirstName != null)
                 {
                     updatedInfo.EmployeeId = id;
-                    if (newEmployeeUtils.EditEmployeeAccount(updatedInfo, ref _msg))
+                    if (newEmployeeUtils.EditEmployeeAccount(updatedInfo))
                     {
                         return NoContent();
                     }
                 }
             }
-
-            _msg = "Invalid Input!!!";
-            return BadRequest(_msg);
+            return BadRequest("Invalid Input!!!");
         }
     }
 }

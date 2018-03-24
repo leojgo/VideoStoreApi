@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VideoStoreApi.Models;
 using VideoStoreApi.Utils;
@@ -8,8 +9,6 @@ namespace VideoStoreApi.Controllers
     [Route("api/Employees")]
     public class EmployeesController : Controller
     {
-        private string _msg;
-
         private readonly EmployeeContext _context;
 
         public EmployeesController(EmployeeContext context)
@@ -30,19 +29,26 @@ namespace VideoStoreApi.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] TempEmployee toCreate)
         {
-            if (toCreate.RawPw == null)
-            {
-                _msg = "Your Password is Missing!!!!";
-                return BadRequest(_msg);
-            }
-
             EmployeeUtils newEmployeeUtils = new EmployeeUtils();
-            if(newEmployeeUtils.CreateNewUser(toCreate, ref _msg))
+            try
             {
-                return NoContent();
-            }
+                if (toCreate.RawPw == null)
+                {
+                    return BadRequest("Your Password is Missing!!!!");
+                }
 
-            return BadRequest(_msg);
+            
+                if(newEmployeeUtils.CreateNewUser(toCreate))
+                {
+                    return NoContent();
+                }
+                return BadRequest("Couldnt create the Employee!");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Couldnt create the Employee!" + e);
+            }
+            
         }
     }
 

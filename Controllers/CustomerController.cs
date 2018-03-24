@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
-using LackLusterVideo.Models;
+using VideoStoreApi.Models;
 using VideoStoreApi.Utils;
 
 namespace VideoStoreApi.Controllers
@@ -8,7 +8,6 @@ namespace VideoStoreApi.Controllers
     [Route("api/Customers")]
     public class CustomerController : Controller
     {
-        private string _msg;
         [HttpPost]
         public IActionResult Create([FromBody] Customer newCustInfo)
         {
@@ -20,18 +19,18 @@ namespace VideoStoreApi.Controllers
             try
             {
                 ReturnedKey newCustomerKey = new ReturnedKey();
-                newCustomerKey.Key = newCustUtil.MakeNewCustomer(newCustInfo, ref _msg);
+                newCustomerKey.Key = newCustUtil.MakeNewCustomer(newCustInfo);
                 if (newCustomerKey.Key > -1)
                 {
                     return Ok(newCustomerKey);
                 }
+                return BadRequest("Error, Customer Couldnt be created!");
+
             }
             catch (Exception e)
             {
-                return StatusCode(500);
+                return StatusCode(500, "Error, Customer Couldnt be created! " + e);
             }
-            
-            return BadRequest(_msg);
         }
     }
 

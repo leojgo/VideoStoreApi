@@ -1,4 +1,4 @@
-namespace LackLusterVideo.Models
+namespace VideoStoreApi.Models
 {
     public class Customer
     {

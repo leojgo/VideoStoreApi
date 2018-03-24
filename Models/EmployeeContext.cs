@@ -1,5 +1,4 @@
-﻿using LackLusterVideo.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace VideoStoreApi.Models
 {

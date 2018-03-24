@@ -1,5 +1,4 @@
 ﻿using System;
-using LackLusterVideo.Models;
 using MySql.Data.MySqlClient;
 using VideoStoreApi.Models;
 
@@ -7,7 +6,7 @@ namespace VideoStoreApi.Utils
 {
     public class MovieUtils
     {
-        public long AddMovie(NewMovie toAdd, ref string msg)
+        public long AddMovie(NewMovie toAdd)
         {
             string addMovieStringQuery = $"INSERT INTO {DatabaseUtils.Databasename}.movieinfo(MOV_INFO_TITLE, MOV_INFO_RELEASE_YEAR, MOV_INFO_GENRE, MOV_INFO_UPC, MOV_STATUS) " +
                                          $"VALUES('{toAdd.Title}', '{toAdd.ReleaseYear}', '{toAdd.Genre}', '{toAdd.Upc}', 0)";
@@ -16,7 +15,7 @@ namespace VideoStoreApi.Utils
             return addMovie.MakeDbQuery(addMovieStringQuery,true);
         }
 
-        public Movie GetMovieById(long movieId, ref string msg)
+        public Movie GetMovieById(long movieId)
         {
             string getMovieByIdQuery = $"SELECT * " +
                                        $"FROM {DatabaseUtils.Databasename}.movieinfo " +
@@ -25,9 +24,9 @@ namespace VideoStoreApi.Utils
             return SqlGetMovieById(getMovieByIdQuery);
         }
 
-        public bool UpdateMovieInfo(Movie newMovieInfo, ref string msg)
+        public bool UpdateMovieInfo(Movie newMovieInfo)
         {
-            string UpdateMovieInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
+            string updateMovieInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
                                             "SET " +
                                             $"MOV_INFO_TITLE = '{newMovieInfo.Title}', " +
                                             $"MOV_INFO_RELEASE_YEAR = '{newMovieInfo.ReleaseYear}', " +
@@ -37,7 +36,7 @@ namespace VideoStoreApi.Utils
                                             $"WHERE MOV_INFO_UNIQ_ID = '{newMovieInfo.MovieId}';";
 
             var updateMovie = DatabaseUtils.Instance();
-            return updateMovie.MakeDbQuery(UpdateMovieInfoQuery);
+            return updateMovie.MakeDbQuery(updateMovieInfoQuery);
         }
 
 

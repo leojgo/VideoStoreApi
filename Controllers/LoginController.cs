@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VideoStoreApi.Models;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace VideoStoreApi.Controllers
     [Route("api/Login")]
     public class LoginController : Controller
     {
-        private string _msg;
+        
 
 
         private readonly SessionContext _context;
@@ -33,8 +34,7 @@ namespace VideoStoreApi.Controllers
             var item = _context.Employees.FirstOrDefault(t => t.EmployeeId == id);
             if (item == null)
             {
-                _msg = "Employee Was Not Found!";
-                return NotFound(_msg);
+                return NotFound("Employee Was Not Found!");
             }
             return new ObjectResult(item);
         }
@@ -44,21 +44,30 @@ namespace VideoStoreApi.Controllers
         {
             if (credentials.Username.ToString() == null || credentials.Password == null)
             {
-                _msg = "Username or Password was not provided!";
-                return BadRequest(_msg);
+                return BadRequest("Username or Password was not provided!");
             }
 
             EmployeeUtils newEmpUtil = new EmployeeUtils();
-            EmployeeInfoToShare newEmployee = newEmpUtil.LogIn(credentials.Username, credentials.Password, ref _msg);
 
-            if (newEmployee != null)
+            try
             {
-                _context.Employees.Add(newEmployee);
-                _context.SaveChanges();
-                return CreatedAtRoute("LoginEmployee", new {id = newEmployee.EmployeeId}, newEmployee );
-            }
+                EmployeeInfoToShare newEmployee = newEmpUtil.LogIn(credentials.Username, credentials.Password);
 
-            return NotFound(_msg);
+                if (newEmployee != null)
+                {
+                    _context.Employees.Add(newEmployee);
+                    _context.SaveChanges();
+                    return CreatedAtRoute("LoginEmployee", new {id = newEmployee.EmployeeId}, newEmployee );
+                }
+                return NotFound($"Couldn't Login Employee {credentials.Username}! ");
+            }
+            catch (Exception e)
+            {
+                return NotFound($"Couldn't Login Employee {credentials.Username}! " + e);
+            }
+            
+
+            
         }
     }
 
