@@ -162,7 +162,7 @@ namespace VideoStoreApi.Utils
         private int SQL_GetLastInsertedId()
         {
             string dbQuery = "SELECT LAST_INSERT_ID();";
-            int LastInsertedKey = -1;
+            int lastInsertedKey = -1;
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
             if (dbCon.IsConnect())
@@ -173,17 +173,17 @@ namespace VideoStoreApi.Utils
                     var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        LastInsertedKey = reader.GetInt32(0);
+                        lastInsertedKey = reader.GetInt32(0);
                     }
-                    return LastInsertedKey;
+                    return lastInsertedKey;
                 }
                 catch (Exception e)
                 {
-                    return LastInsertedKey;
+                    return lastInsertedKey;
                 }
             }
 
-            return LastInsertedKey;
+            return lastInsertedKey;
         }
 
     }

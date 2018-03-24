@@ -19,9 +19,9 @@ namespace VideoStoreApi.Controllers
 
             try
             {
-                returnedKey newCustomerKey = new returnedKey();
-                newCustomerKey.key = newCustUtil.MakeNewCustomer(newCustInfo, ref _msg);
-                if (newCustomerKey.key > -1)
+                ReturnedKey newCustomerKey = new ReturnedKey();
+                newCustomerKey.Key = newCustUtil.MakeNewCustomer(newCustInfo, ref _msg);
+                if (newCustomerKey.Key > -1)
                 {
                     return Ok(newCustomerKey);
                 }
@@ -35,8 +35,8 @@ namespace VideoStoreApi.Controllers
         }
     }
 
-    public class returnedKey
+    public class ReturnedKey
     {
-        public int key { get; set; }
+        public int Key { get; set; }
     }
 }

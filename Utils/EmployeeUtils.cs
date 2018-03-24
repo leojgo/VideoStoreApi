@@ -104,9 +104,9 @@ namespace VideoStoreApi.Utils
                                           $"FROM {DatabaseUtils.Databasename}.employeelist;";
             List<Employee> allEmployees = SqlGetAllEmployees(getAllemployeesQuery);
             List<EmployeeInfoToShare> cleanedEmployeeInfo = new List<EmployeeInfoToShare>();
-            foreach (var Employee in allEmployees)
+            foreach (var employee in allEmployees)
             {
-                cleanedEmployeeInfo.Add(RemovePersonalInfo(Employee));
+                cleanedEmployeeInfo.Add(RemovePersonalInfo(employee));
             }
 
             return cleanedEmployeeInfo;
