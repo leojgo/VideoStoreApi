@@ -9,7 +9,7 @@ namespace VideoStoreApi.Utils
 {
     public class MovieUtils
     {
-        List<Movie> _searchResults = new List<Movie>();
+        private List<Movie> _searchResults = null;
 
         public long AddMovie(NewMovie toAdd)
         {
