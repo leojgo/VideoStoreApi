@@ -9,7 +9,7 @@ namespace VideoStoreApi.Utils
     {
         public EmployeeInfoToShare LogIn(int userIdNumber, string password)
         {
-            Employee toLogIn = GetEmployeeById_RAW(userIdNumber);
+            var toLogIn = GetEmployeeById_RAW(userIdNumber);
 
             if (PasswordUtils.Verify(password, toLogIn.PwHash))
             {
@@ -21,7 +21,7 @@ namespace VideoStoreApi.Utils
         }
         public static EmployeeInfoToShare RemovePersonalInfo(Employee toClean)
         {
-            EmployeeInfoToShare cleanedInfo = new EmployeeInfoToShare();
+            var cleanedInfo = new EmployeeInfoToShare();
             cleanedInfo.Active = toClean.Active;
             cleanedInfo.EmployeeId = toClean.EmployeeId;
             cleanedInfo.EmployeeTitle = toClean.EmployeeTitle;
@@ -39,9 +39,9 @@ namespace VideoStoreApi.Utils
                 Employee newEmployee = temp;
                 newEmployee.PwHash = PasswordUtils.Hash(temp.RawPw);
 
-                string createUserQuery = $"INSERT INTO {DatabaseUtils.Databasename}.employeelist(EMP_Name_First, EMP_Name_Last, EMP_PW_Hash,EMP_Active, EMP_Type, EMP_PhoneNumber) " +
+                var createUserQuery = $"INSERT INTO {DatabaseUtils.Databasename}.employeelist(EMP_Name_First, EMP_Name_Last, EMP_PW_Hash,EMP_Active, EMP_Type, EMP_PhoneNumber) " +
                                             $"VALUES('{newEmployee.FirstName}', '{newEmployee.LastName}','{newEmployee.PwHash}','1','{newEmployee.EmployeeType}',{newEmployee.PhoneNumber});";
-                DatabaseUtils createUser = DatabaseUtils.Instance();
+                var createUser = DatabaseUtils.Instance();
                 return createUser.MakeDbQuery(createUserQuery);
             }
             return false;
@@ -50,13 +50,13 @@ namespace VideoStoreApi.Utils
         public EmployeeInfoToShare ViewEmployeeAccount(int empId)
 
         {
-            string loginStringQuery = $"SELECT * FROM {DatabaseUtils.Databasename}.employeelist WHERE EMP_ID = {empId};";
+            var loginStringQuery = $"SELECT * FROM {DatabaseUtils.Databasename}.employeelist WHERE EMP_ID = {empId};";
             return RemovePersonalInfo(SqlGetEmployee(loginStringQuery));
         }
 
         public bool EditEmployeeAccount(EmployeeInfoToShare updatedEmployee)
         {
-            string updateEmployeeInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.employeelist " +
+            var updateEmployeeInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.employeelist " +
                                                 $"SET EMP_Name_First = '{updatedEmployee.FirstName}', " +
                                                 $"EMP_Name_Last = '{updatedEmployee.LastName}', " +
                                                 $"EMP_Active = '{Convert.ToInt32(updatedEmployee.Active)}', " +
@@ -70,10 +70,10 @@ namespace VideoStoreApi.Utils
 
         public IEnumerable<EmployeeInfoToShare> GetAllEmployees()
         {
-            string getAllemployeesQuery = $"SELECT * " +
+            var getAllemployeesQuery = $"SELECT * " +
                                           $"FROM {DatabaseUtils.Databasename}.employeelist;";
-            List<Employee> allEmployees = SqlGetAllEmployees(getAllemployeesQuery);
-            List<EmployeeInfoToShare> cleanedEmployeeInfo = new List<EmployeeInfoToShare>();
+            var allEmployees = SqlGetAllEmployees(getAllemployeesQuery);
+            var cleanedEmployeeInfo = new List<EmployeeInfoToShare>();
             foreach (var employee in allEmployees)
             {
                 cleanedEmployeeInfo.Add(RemovePersonalInfo(employee));
@@ -84,12 +84,12 @@ namespace VideoStoreApi.Utils
 
         public EmployeeInfoToShare GetEmployeeById(int id)
         {
-            string loginStringQuery = "SELECT * " +
+            var loginStringQuery = "SELECT * " +
                                       $"FROM {DatabaseUtils.Databasename}.employeelist " +
                                       $"WHERE EMP_ID = {id};";
 
 
-            Employee toGet = SqlGetEmployee(loginStringQuery);
+            var toGet = SqlGetEmployee(loginStringQuery);
             toGet.EmployeeTitle = GetEmployeeTitle(toGet);
 
             return RemovePersonalInfo(toGet);
@@ -100,7 +100,7 @@ namespace VideoStoreApi.Utils
         {
             try
             {
-                string employerTitleQuery = "SELECT Emp_Title " +
+                var employerTitleQuery = "SELECT Emp_Title " +
                                             $"FROM {DatabaseUtils.Databasename}.employeetitles " +
                                             $"WHERE EMP_LVL = {empToCheck.EmployeeType}";
 
@@ -150,12 +150,12 @@ namespace VideoStoreApi.Utils
 
         private Employee GetEmployeeById_RAW(int id)
         {
-            string loginStringQuery = "SELECT * " +
+            var loginStringQuery = "SELECT * " +
                                       $"FROM {DatabaseUtils.Databasename}.employeelist " +
                                       $"WHERE EMP_ID = {id};";
 
 
-            Employee toGet = SqlGetEmployee(loginStringQuery);
+            var toGet = SqlGetEmployee(loginStringQuery);
             toGet.EmployeeTitle = GetEmployeeTitle(toGet);
 
             return toGet;
@@ -206,7 +206,7 @@ namespace VideoStoreApi.Utils
         //SQL Queries go Below!
         public Employee SqlGetEmployee(string dbQuery)
         {
-            Employee temp = new Employee();
+            var temp = new Employee();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
             if (dbCon.IsConnect())
@@ -236,7 +236,7 @@ namespace VideoStoreApi.Utils
 
         public List<Employee> SqlGetAllEmployees(string dbQuery)
         {
-            List<Employee> allEmployees  = new List<Employee>();
+            var allEmployees  = new List<Employee>();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
             if (dbCon.IsConnect())
@@ -246,7 +246,7 @@ namespace VideoStoreApi.Utils
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    Employee temp = new Employee();
+                    var temp = new Employee();
                     temp.EmployeeId = reader.GetInt32("EMP_ID");
                     temp.FirstName = reader.GetString("EMP_Name_First");
                     temp.LastName = reader.GetString("EMP_Name_Last");

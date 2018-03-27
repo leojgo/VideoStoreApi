@@ -29,7 +29,7 @@ namespace VideoStoreApi.Utils
 
         public Customer GetCustomerById(int id)
         {
-            string getCustomerQuery = $"SELECT * " +
+            var getCustomerQuery = $"SELECT * " +
                                       $"FROM {DatabaseUtils.Databasename}.customers " +
                                       $"WHERE CUST_ID = {id};";
 
@@ -38,7 +38,7 @@ namespace VideoStoreApi.Utils
 
         public bool MakeCustomerInactive(int id)
         {
-            string disableCustomerQuery = $"UPDATE {DatabaseUtils.Databasename}.customers " +
+            var disableCustomerQuery = $"UPDATE {DatabaseUtils.Databasename}.customers " +
                                             $"SET CUST_Active = 0 " +
                                             $"WHERE CUST_ID = {id}";
 
@@ -94,7 +94,7 @@ namespace VideoStoreApi.Utils
 
         private Customer SqlGetCustomerById(string dbQuery)
         {
-            Customer temp = new Customer();
+            var temp = new Customer();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
             if (dbCon.IsConnect())
@@ -110,7 +110,7 @@ namespace VideoStoreApi.Utils
                     temp.NameLast = reader.GetString($"CUST_Name_Last");
                     temp.AddLine1 = reader.GetString($"CUST_Add_Line1");
 
-                    int location = reader.GetOrdinal($"CUST_Add_Line2");
+                    var location = reader.GetOrdinal($"CUST_Add_Line2");
                     if (!reader.IsDBNull(location))
                     {
                         temp.AddLine2 = reader.GetString($"CUST_Add_Line2");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using VideoStoreApi.Models;
 using VideoStoreApi.Utils;
@@ -13,8 +14,8 @@ namespace VideoStoreApi.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] NewMovie newMovie)  // Add New Movie
         {
-            MovieUtils newMovieUtils = new MovieUtils();
-            MovieId addedMovie = new MovieId();
+            var newMovieUtils = new MovieUtils();
+            var addedMovie = new MovieId();
             try
             {
                 addedMovie.Id = newMovieUtils.AddMovie(newMovie);
@@ -30,12 +31,6 @@ namespace VideoStoreApi.Controllers
             {
                 return StatusCode(500, "Couldn't Add the Movie!" + e);
             }
-        }
-
-        [HttpGet]
-        public IActionResult Search(Movie searchInfo)
-        {
-            return BadRequest("Not Implemented Yet!");
         }
     }
 }

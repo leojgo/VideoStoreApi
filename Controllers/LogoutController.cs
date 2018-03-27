@@ -40,8 +40,8 @@ namespace VideoStoreApi.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] Logout credentials)
         {
-            EmployeeUtils newEmpUtil = new EmployeeUtils();
-            EmployeeInfoToShare toLogOut = newEmpUtil.ViewEmployeeAccount(credentials.Username);
+            var newEmpUtil = new EmployeeUtils();
+            var toLogOut = newEmpUtil.ViewEmployeeAccount(credentials.Username);
 
             if (toLogOut == null)
             {

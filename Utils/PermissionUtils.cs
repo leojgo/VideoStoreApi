@@ -8,17 +8,17 @@ namespace VideoStoreApi.Utils
     {
         public Permission GetPermissionById(int id)
         {
-            string GetPermissionByIdQuery = "SELECT * " +
+            var getPermissionByIdQuery = "SELECT * " +
                                             $"FROM {DatabaseUtils.Databasename}.employeepermissions " +
                                             $"WHERE `EMP_Permiss` = {id};";
 
-            return SqlGetPermissionById(GetPermissionByIdQuery);
+            return SqlGetPermissionById(getPermissionByIdQuery);
 
         }
 
         private Permission SqlGetPermissionById(string dbQuery)
         {
-            Permission temp = new Permission();
+            var temp = new Permission();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
             if (dbCon.IsConnect())

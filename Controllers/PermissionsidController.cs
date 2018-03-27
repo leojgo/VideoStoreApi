@@ -26,8 +26,8 @@ namespace VideoStoreApi.Controllers
         {
             try
             {
-                PermissionUtils newPermissionUtils = new PermissionUtils();
-                Permission toGet = new Permission();
+                var newPermissionUtils = new PermissionUtils();
+                var toGet = new Permission();
                 toGet = newPermissionUtils.GetPermissionById(id);
 
                 if (toGet.EmpPermiss > 0)

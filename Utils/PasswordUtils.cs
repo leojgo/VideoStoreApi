@@ -73,7 +73,7 @@ namespace VideoStoreApi.Utils
 
             //create hash with given salt
             var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations);
-            byte[] hash = pbkdf2.GetBytes(HashSize);
+            var hash = pbkdf2.GetBytes(HashSize);
 
             //get result
             for (var i = 0; i < HashSize; i++)

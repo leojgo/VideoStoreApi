@@ -47,11 +47,11 @@ namespace VideoStoreApi.Controllers
                 return BadRequest("Username or Password was not provided!");
             }
 
-            EmployeeUtils newEmpUtil = new EmployeeUtils();
+            var newEmpUtil = new EmployeeUtils();
 
             try
             {
-                EmployeeInfoToShare newEmployee = newEmpUtil.LogIn(credentials.Username, credentials.Password);
+                var newEmployee = newEmpUtil.LogIn(credentials.Username, credentials.Password);
 
                 if (newEmployee != null)
                 {

@@ -21,7 +21,7 @@ namespace VideoStoreApi.Controllers
         [HttpGet]
         public IEnumerable<EmployeeInfoToShare> GetAll()
         {
-            EmployeeUtils newEmployeeUtils = new EmployeeUtils();
+            var newEmployeeUtils = new EmployeeUtils();
 
             return newEmployeeUtils.GetAllEmployees();
         }
@@ -29,7 +29,7 @@ namespace VideoStoreApi.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] TempEmployee toCreate)
         {
-            EmployeeUtils newEmployeeUtils = new EmployeeUtils();
+            var newEmployeeUtils = new EmployeeUtils();
             try
             {
                 if (toCreate.RawPw == null)

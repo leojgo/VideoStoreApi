@@ -11,14 +11,14 @@ namespace VideoStoreApi.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] Customer newCustInfo)
         {
-            CustomerUtils newCustUtil = new CustomerUtils();
+            var newCustUtil = new CustomerUtils();
 
             newCustInfo.AccountBalance = 0;
             newCustInfo.Active = true;
 
             try
             {
-                ReturnedKey newCustomerKey = new ReturnedKey();
+                var newCustomerKey = new ReturnedKey();
                 newCustomerKey.Key = newCustUtil.MakeNewCustomer(newCustInfo);
                 if (newCustomerKey.Key > -1)
                 {

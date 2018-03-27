@@ -23,9 +23,9 @@ namespace VideoStoreApi.Controllers
         [HttpGet("{id}", Name = "GetMovie")]
         public IActionResult GetMovieById(long id)
         {
-            MovieUtils newMovieUtils = new MovieUtils();
+            var newMovieUtils = new MovieUtils();
 
-            Movie lookedUpMovie = newMovieUtils.GetMovieById(id);
+            var lookedUpMovie = newMovieUtils.GetMovieById(id);
             try
             {
                 if (lookedUpMovie.Title != null)
@@ -46,9 +46,9 @@ namespace VideoStoreApi.Controllers
         {
             try
             {
-                MovieUtils newMovieUtils = new MovieUtils();
+                var newMovieUtils = new MovieUtils();
                 updatedMovieInfo.MovieId = id;
-                bool result = newMovieUtils.UpdateMovieInfo(updatedMovieInfo);
+                var result = newMovieUtils.UpdateMovieInfo(updatedMovieInfo);
 
                 if (result)
                 {

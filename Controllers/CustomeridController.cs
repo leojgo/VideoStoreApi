@@ -28,7 +28,7 @@ namespace VideoStoreApi.Controllers
         [HttpGet("{id}", Name = "GetCustomer")]
         public IActionResult GetById(int id)
         {
-            CustomerUtils newCustUtil = new CustomerUtils();
+            var newCustUtil = new CustomerUtils();
 
             var item = newCustUtil.GetCustomerById(id);
 
@@ -46,7 +46,7 @@ namespace VideoStoreApi.Controllers
         {
             try
             {
-                CustomerUtils newCustUtil = new CustomerUtils();
+                var newCustUtil = new CustomerUtils();
                 if (newCustUtil.MakeCustomerInactive(id))
                 {
                     return NoContent();
@@ -66,10 +66,10 @@ namespace VideoStoreApi.Controllers
         public IActionResult UpdateInfo([FromBody] Customer customer)
         {
 
-            CustomerUtils newCustUtil = new CustomerUtils();
+            var newCustUtil = new CustomerUtils();
             try
             {
-                bool result = newCustUtil.UpdateCustomer(customer);
+                var result = newCustUtil.UpdateCustomer(customer);
 
                 if (result)
                 {

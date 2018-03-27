@@ -19,8 +19,8 @@ namespace VideoStoreApi.Controllers
         [HttpGet("{id}")]
         public IActionResult GetEmployeeInfoById(int id)
         {
-            EmployeeUtils newEmployeeUtils = new EmployeeUtils();
-            EmployeeInfoToShare empToClean = newEmployeeUtils.GetEmployeeById(id);
+            var newEmployeeUtils = new EmployeeUtils();
+            var empToClean = newEmployeeUtils.GetEmployeeById(id);
             if (empToClean != null)
             {
                 return Ok(empToClean);
@@ -35,7 +35,7 @@ namespace VideoStoreApi.Controllers
         {
             if (updatedInfo != null)
             {
-                EmployeeUtils newEmployeeUtils = new EmployeeUtils();
+                var newEmployeeUtils = new EmployeeUtils();
                 if (updatedInfo.FirstName != null)
                 {
                     updatedInfo.EmployeeId = id;

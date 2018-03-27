@@ -54,7 +54,7 @@ namespace VideoStoreApi.Utils
                 {
                     if (String.IsNullOrEmpty(_databaseName))
                         return false;
-                    string connstring = string.Format(DbConnectionString, _databaseName);
+                    var connstring = string.Format(DbConnectionString, _databaseName);
                     _connection = new MySqlConnection(connstring);
                     _connection.Open();
                 }
@@ -125,7 +125,7 @@ namespace VideoStoreApi.Utils
 
         public int MakeDbQuery(string dbQuery, bool getLastKey)
         {
-            int key = -1;
+            var key = -1;
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
             if (dbCon.IsConnect())
@@ -161,8 +161,8 @@ namespace VideoStoreApi.Utils
 
         private int SQL_GetLastInsertedId()
         {
-            string dbQuery = "SELECT LAST_INSERT_ID();";
-            int lastInsertedKey = -1;
+            var dbQuery = "SELECT LAST_INSERT_ID();";
+            var lastInsertedKey = -1;
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
             if (dbCon.IsConnect())
