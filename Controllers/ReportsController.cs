@@ -13,7 +13,7 @@ namespace VideoStoreApi.Controllers
         {
             try
             {
-                if (RequestInfo.reportType != null && RequestInfo.reportQty != 0)
+                if (RequestInfo.reportType != null)
                 {
                     ReportUtils newReportUtils = new ReportUtils();
 
