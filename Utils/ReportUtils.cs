@@ -8,11 +8,35 @@ namespace VideoStoreApi.Utils
 {
     public class ReportUtils
     {
-        public List<Movie> RunOverdueReport(int NumberofResults)
-        {
-            List<Movie> Overdue = new List<Movie>();
+        //1 checked out
+        //0 in stock
+        //-1 on hold
 
-            return null;
+        public List<MovieTitles> RunOverdueReport(int NumberofResults)
+        {
+            List<MovieTitles> Overdue = new List<MovieTitles>();
+
+            string overdueReportSql = $"SELECT * " +
+                                      $"FROM {DatabaseUtils.Databasename}.movieinfo " +
+                                      $"WHERE MOV_STATUS > 0;";
+
+            Overdue = SqlGetMovieList(overdueReportSql);
+            List<MovieTitles> toRemove = new List<MovieTitles>();
+
+            foreach (var movie in Overdue)
+            {
+                if (DateTime.Now.Date < Convert.ToDateTime(movie.ReturnDate).Date)
+                {
+                    toRemove.Add(movie);
+                }
+            }
+
+            foreach (var movie in toRemove)
+            {
+                Overdue.Remove(movie);
+            }
+
+            return Overdue;
         }
 
         public List<Movie> RunPopularReport(int NumberofResults)
@@ -27,6 +51,36 @@ namespace VideoStoreApi.Utils
             List<Customer> BestCustomers = new List<Customer>();
 
             return null;
+        }
+
+
+
+
+
+        private List<MovieTitles> SqlGetMovieList(string dbQuery)
+        {
+            var temp = new List<MovieTitles>();
+            var dbCon = DatabaseUtils.Instance();
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
+            if (dbCon.IsConnect())
+            {
+                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var mov = new MovieTitles();
+
+                    mov.Title = reader.GetString("MOV_INFO_TITLE");
+                    mov.ReturnDate = reader.GetString("MOV_RETURN_DATE");
+
+                    temp.Add(mov);
+                    mov = null;
+                }
+
+                dbCon.Close();
+            }
+            return temp;
         }
     }
 }

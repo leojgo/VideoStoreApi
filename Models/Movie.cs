@@ -14,6 +14,12 @@ namespace VideoStoreApi.Models
         public int Status { get; set; }
     }
 
+    public class MovieTitles
+    {
+        public string Title { get; set; }
+        public string ReturnDate { get; set; }
+    }
+
     public class NewMovie
     {
         public string Title { get; set; }

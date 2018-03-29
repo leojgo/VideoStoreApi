@@ -56,10 +56,6 @@ namespace VideoStoreApi.Utils
 
                 if (AddMov2TransInfo.MakeDbQuery(newTransQuery))
                 {
-                    //-1 checked out
-                    //0 in stock
-                    // 1 on hold
-
                     foreach (var movId in forTrans.MovieList)
                     {
                         string updateMovieStatusQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +

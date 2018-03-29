@@ -13,13 +13,14 @@ namespace VideoStoreApi.Controllers
         {
             try
             {
-                if (RequestInfo.reportType != null && RequestInfo.reportQty > 0)
+                if (RequestInfo.reportType != null && RequestInfo.reportQty != 0)
                 {
                     ReportUtils newReportUtils = new ReportUtils();
 
                     if (RequestInfo.reportType == "Overdue")
                     {
-                        newReportUtils.RunOverdueReport(RequestInfo.reportQty);
+                        var overdue = newReportUtils.RunOverdueReport(RequestInfo.reportQty);
+                        return Json(overdue);
                     }
                     else if (RequestInfo.reportType == "Popular")
                     {
