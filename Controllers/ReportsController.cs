@@ -24,7 +24,8 @@ namespace VideoStoreApi.Controllers
                     }
                     else if (RequestInfo.reportType == "Popular")
                     {
-                        newReportUtils.RunPopularReport(RequestInfo.reportQty);
+                        var Popular = newReportUtils.RunPopularReport(RequestInfo.reportQty);
+                        return Json(Popular);
                     }
                     else if (RequestInfo.reportType == "Customer")
                     {
