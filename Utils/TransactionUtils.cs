@@ -8,7 +8,6 @@ namespace VideoStoreApi.Utils
 {
     public class TransactionUtils
     {
-        public int MovieCost = 3;
         public bool MakeTransaction(TransInput forTrans)
         {
             Transaction trans = new Transaction();
@@ -32,16 +31,23 @@ namespace VideoStoreApi.Utils
                 }
             }
 
-
             if (AddMov2TransInfo.MakeDbQuery(addMov2TransInfoQuery))
             {
                 trans.TransId = transID;
-                trans.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                trans.Date = DateTime.Now.ToString("yyyy-MM-dd");
                 trans.EmpId = forTrans.EmployeeId;
                 trans.Fees = 0;
                 trans.FeesPaid = 0;
                 trans.RemBalance = 0;
-                trans.TotalPaid = MovieCost * forTrans.MovieList.Count;
+
+                int runningCost = 0;
+
+                foreach (var movieCost in forTrans.MovieList)
+                {
+                    runningCost += movieCost.Cost;
+                }
+
+                trans.TotalPaid = runningCost;
                 trans.CustId = forTrans.CustomerId;
 
                 string newTransQuery =
@@ -57,7 +63,7 @@ namespace VideoStoreApi.Utils
                     foreach (var movId in forTrans.MovieList)
                     {
                         string updateMovieStatusQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
-                                                        $"SET MOV_STATUS = 1 " + 
+                                                        $"SET MOV_STATUS = 1, MOV_RETURN_DATE = \"{movId.DueDate}\" " + 
                                                         $"WHERE MOV_INFO_UNIQ_ID = {movId.Id};";
 
                         if (!AddMov2TransInfo.MakeDbQuery(updateMovieStatusQuery))

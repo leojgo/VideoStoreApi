@@ -26,5 +26,11 @@ namespace VideoStoreApi.Models
     {
         public long Id { get; set; }
     }
+    public class Movies4Trans
+    {
+        public long Id { get; set; }
+        public int Cost { get; set; }
+        public string DueDate { get; set; }
+    }
 }
 

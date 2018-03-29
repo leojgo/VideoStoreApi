@@ -84,21 +84,6 @@ namespace VideoStoreApi.Utils
             if (dbCon.IsConnect())
             {
                 var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                //Used for Reading response only!!!  This needs to be implemented in it's own class!!!
-                /*
-                if (readResponse)
-                {
-                    var reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        string StringOne = reader.GetString(0);
-                        string StringTwo = reader.GetString(1);
-                    }
-                }
-                else
-                {
-                */
                     try
                     {
                         cmd.ExecuteNonQuery();
@@ -112,9 +97,6 @@ namespace VideoStoreApi.Utils
                         dbCon.Close();
                         return false;
                     }
-
-                //}
-
                 dbQuery = null;
                 dbCon.Close();
             }
@@ -148,9 +130,6 @@ namespace VideoStoreApi.Utils
                     dbCon.Close();
                     return key;
                 }
-
-                //}
-
                 dbQuery = null;
                 dbCon.Close();
             }
