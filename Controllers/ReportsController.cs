@@ -37,7 +37,7 @@ namespace VideoStoreApi.Controllers
             }
             catch (Exception e)
             {
-                return NotFound("Couldnt get A report, given the inputs!");
+                return NotFound("Couldnt get A report, given the inputs! " + e);
             }
         }
     }

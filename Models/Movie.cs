@@ -16,8 +16,13 @@ namespace VideoStoreApi.Models
 
     public class MovieTitles
     {
+        public long MovieId { get; set; }
         public string Title { get; set; }
         public string ReturnDate { get; set; }
+        public string CustFirstName { get; set; }
+        public string CustLastName { get; set; }
+        public long CustPhoneNumber { get; set; }
+
     }
 
     public class NewMovie

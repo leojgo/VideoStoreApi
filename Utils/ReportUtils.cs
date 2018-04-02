@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using VideoStoreApi.Controllers;
@@ -8,10 +9,6 @@ namespace VideoStoreApi.Utils
 {
     public class ReportUtils
     {
-        //1 checked out
-        //0 in stock
-        //-1 on hold
-
         public List<MovieTitles> RunOverdueReport(int NumberofResults)
         {
             List<MovieTitles> Overdue = new List<MovieTitles>();
@@ -36,7 +33,39 @@ namespace VideoStoreApi.Utils
                 Overdue.Remove(movie);
             }
 
-            return Overdue;
+
+            foreach (var movie in Overdue)
+            {
+                long CustId = 0;
+                long TransId = 0;
+
+                string GetTransIdQuery = $"SELECT MAX(TRANS2MOV_TRANS_ID) " +
+                                        $"FROM {DatabaseUtils.Databasename}.transactions2movies " +
+                                        $"WHERE TRANS2MOV_MOV_ID = {movie.MovieId};";
+
+                TransId = SqlGetTransInfo(GetTransIdQuery);
+
+                string GetCustomerIdQuery = $"SELECT TRANS_Cust_ID " + 
+                                            $"FROM {DatabaseUtils.Databasename}.transactions " + 
+                                            $"WHERE TRANS_ID = {TransId};";
+
+                CustId = SqlGetCustomerInfo(GetCustomerIdQuery);
+
+                var getCustomerQuery = $"SELECT * " +
+                                       $"FROM {DatabaseUtils.Databasename}.customers " +
+                                       $"WHERE CUST_ID = {CustId};";
+
+                Customer CustInfo = new Customer();
+                CustInfo = SqlGetCustomerById(getCustomerQuery);
+
+                movie.CustFirstName = CustInfo.NameFirst;
+                movie.CustLastName = CustInfo.NameLast;
+                movie.CustPhoneNumber = CustInfo.PhoneNumber;
+            }
+
+            List<MovieTitles> SortedList = Overdue.OrderBy(o=>o.ReturnDate).ToList();
+
+            return SortedList;
         }
 
         public List<Movie2ClassResultsString> RunPopularReport(int numberofRecords)
@@ -82,8 +111,6 @@ namespace VideoStoreApi.Utils
             return null;
         }
 
-
-
         private List<Movie2ClassResults> SQLGetPopularList(string dbQuery)
         {
             var temp = new List<Movie2ClassResults>();
@@ -123,6 +150,7 @@ namespace VideoStoreApi.Utils
                 {
                     var mov = new MovieTitles();
 
+                    mov.MovieId = reader.GetInt64("MOV_INFO_UNIQ_ID");
                     mov.Title = reader.GetString("MOV_INFO_TITLE");
                     mov.ReturnDate = reader.GetString("MOV_RETURN_DATE");
 
@@ -152,6 +180,73 @@ namespace VideoStoreApi.Utils
 
                 dbCon.Close();
             }
+            return temp;
+        }
+
+        private long SqlGetTransInfo(string dbQuery)
+        {
+            long temp = 0;
+            var dbCon = DatabaseUtils.Instance();
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
+            if (dbCon.IsConnect())
+            {
+                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    temp = reader.GetInt64("MAX(TRANS2MOV_TRANS_ID)");
+                }
+
+                dbCon.Close();
+            }
+            return temp;
+        }
+
+        private long SqlGetCustomerInfo(string dbQuery)
+        {
+            long temp = 0;
+            var dbCon = DatabaseUtils.Instance();
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
+            if (dbCon.IsConnect())
+            {
+                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    temp = reader.GetInt64("TRANS_Cust_ID");
+                }
+
+                dbCon.Close();
+            }
+            return temp;
+        }
+
+        private Customer SqlGetCustomerById(string dbQuery)
+        {
+            var temp = new Customer();
+            var dbCon = DatabaseUtils.Instance();
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
+            if (dbCon.IsConnect())
+            {
+                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    temp.CustomerId = reader.GetInt32($"CUST_ID");
+                    temp.NameFirst = reader.GetString($"CUST_Name_First");
+                    temp.NameLast = reader.GetString($"CUST_Name_Last");
+                    temp.PhoneNumber = reader.GetInt64($"CUST_PhoneNumber");
+                }
+
+                dbCon.Close();
+            }
+
+            if (temp.CustomerId == 0)
+                //No Match in the DB
+                return null;
             return temp;
         }
     }
