@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using MySql.Data.MySqlClient;
@@ -96,7 +98,9 @@ namespace VideoStoreApi.Utils
                 CompareResults(tempSearchResults);
             }
 
-            return _searchResults;
+            List<Movie> SortedList = _searchResults.OrderBy(o=>o.Upc).ToList();
+
+            return SortedList;
         }
 
         private void CompareResults(List<Movie> newResults)
