@@ -104,11 +104,37 @@ namespace VideoStoreApi.Utils
             return popularMovieTitles;
         }
 
-        public List<Customer> RunCustomerReport(int NumberofResults)
+        public List<CustomerInfo> RunCustomerReport(int NumberofResults)
         {
-            List<Customer> BestCustomers = new List<Customer>();
+            List<CustomerInfo> BestCustomers = new List<CustomerInfo>();
 
-            return null;
+            string GetBestInfoQuery = $"SELECT TRANS_Cust_ID, COUNT(*) as count " +
+                                      $"FROM {DatabaseUtils.Databasename}.transactions " +
+                                      $"GROUP BY TRANS_Cust_ID ORDER BY count DESC;";
+
+            List<PopularCustomerInfo> CustomerInfo = SqlGetCustIDs(GetBestInfoQuery, NumberofResults);
+
+            foreach (var cust in CustomerInfo)
+            {
+                var getCustomerQuery = $"SELECT * " +
+                                       $"FROM {DatabaseUtils.Databasename}.customers " +
+                                       $"WHERE CUST_ID = {cust.customerId};";
+
+                Customer CustInfo = new Customer();
+                CustInfo = SqlGetCustomerById(getCustomerQuery);
+                
+
+                CustomerInfo bestCust = new CustomerInfo();
+                bestCust.CustomerId = CustInfo.CustomerId;
+                bestCust.NameFirst = CustInfo.NameFirst;
+                bestCust.NameLast = CustInfo.NameLast;
+                bestCust.PhoneNumber = CustInfo.PhoneNumber;
+                bestCust.TransactionCount = cust.transactionCount;
+
+                BestCustomers.Add(bestCust);
+            }
+
+            return BestCustomers;
         }
 
         private List<Movie2ClassResults> SQLGetPopularList(string dbQuery)
@@ -249,6 +275,37 @@ namespace VideoStoreApi.Utils
                 return null;
             return temp;
         }
+
+        private List<PopularCustomerInfo> SqlGetCustIDs(string dbQuery, int numberOfResults)
+        {
+            var temp = new List<PopularCustomerInfo>();
+            int numOfEntriesRead = 0;
+            var dbCon = DatabaseUtils.Instance();
+            dbCon.DatabaseName = DatabaseUtils.Databasename;
+            if (dbCon.IsConnect())
+            {
+                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var curCust = new PopularCustomerInfo();
+
+                    curCust.customerId = reader.GetInt64($"TRANS_CUST_ID");
+                    curCust.transactionCount = reader.GetInt32($"count");
+
+                    temp.Add(curCust);
+                    numOfEntriesRead++;
+                    if (numOfEntriesRead >= numberOfResults)
+                    {
+                        break;
+                    }
+                }
+
+                dbCon.Close();
+            }
+            return temp;
+        }
     }
 
     public class Movie2ClassResults
@@ -260,5 +317,11 @@ namespace VideoStoreApi.Utils
     {
         public string Title { get; set; }
         public int count { get; set; }
+    }
+
+    public class PopularCustomerInfo
+    {
+        public long customerId { get; set; }
+        public int transactionCount { get; set; }
     }
 }

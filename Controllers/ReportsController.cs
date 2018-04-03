@@ -29,7 +29,8 @@ namespace VideoStoreApi.Controllers
                     }
                     else if (RequestInfo.reportType == "Customer")
                     {
-                        newReportUtils.RunCustomerReport(RequestInfo.reportQty);
+                        var bestCust = newReportUtils.RunCustomerReport(RequestInfo.reportQty);
+                        return Json(bestCust);
                     }
                 }
 
