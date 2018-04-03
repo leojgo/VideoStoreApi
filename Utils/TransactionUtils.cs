@@ -8,7 +8,7 @@ namespace VideoStoreApi.Utils
 {
     public class TransactionUtils
     {
-        public bool MakeTransaction(TransInput forTrans)
+        public long MakeTransaction(TransInput forTrans)
         {
             Transaction trans = new Transaction();
             var AddMov2TransInfo = DatabaseUtils.Instance();
@@ -54,8 +54,10 @@ namespace VideoStoreApi.Utils
                     $"INSERT INTO {DatabaseUtils.Databasename}.transactions(TRANS_ID, TRANS_Date, TRANS_Employee, TRANS_Fees, TRANS_Fees_Paid, TRANS_Total_Paid, TRANS_Rem_Balance, TRANS_Cust_ID) " + 
                     $"VALUES('{trans.TransId}', '{trans.Date}', '{trans.EmpId}', '{trans.Fees}', '{trans.FeesPaid}', '{trans.RemBalance}', '{trans.TotalPaid}', '{trans.CustId}');";
 
+                
                 if (AddMov2TransInfo.MakeDbQuery(newTransQuery))
                 {
+                    
                     foreach (var movId in forTrans.MovieList)
                     {
                         string updateMovieStatusQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
@@ -64,13 +66,13 @@ namespace VideoStoreApi.Utils
 
                         if (!AddMov2TransInfo.MakeDbQuery(updateMovieStatusQuery))
                         {
-                            return false;
+                            return -1;
                         }
                     }
                 }
-                return true;
+                return trans.TransId;
             }
-            return false;
+            return -1;
         }
 
         private int SqlGetMappingId(string dbQuery)

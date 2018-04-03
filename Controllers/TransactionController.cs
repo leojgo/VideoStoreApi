@@ -15,9 +15,10 @@ namespace VideoStoreApi.Controllers
             try
             {
                 TransactionUtils newTransactionUtils = new TransactionUtils();
-                if (newTransactionUtils.MakeTransaction(newTrans))
+                long transID = newTransactionUtils.MakeTransaction(newTrans);
+                if (transID > -1)
                 {
-                    return Ok();
+                    return Json(transID);
                 }
                 return StatusCode(500, "Couldn't Complete the Transaction!");
             }
