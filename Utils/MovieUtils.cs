@@ -13,13 +13,21 @@ namespace VideoStoreApi.Utils
     {
         private List<Movie> _searchResults = null;
 
-        public long AddMovie(NewMovie toAdd)
+        public List<MovieId> AddMovie(NewMovie toAdd)
         {
-            var addMovieStringQuery = $"INSERT INTO {DatabaseUtils.Databasename}.movieinfo(MOV_INFO_TITLE, MOV_INFO_RELEASE_YEAR, MOV_INFO_GENRE, MOV_INFO_UPC, MOV_STATUS) " +
-                                         $"VALUES('{toAdd.Title}', '{toAdd.ReleaseYear}', '{toAdd.Genre}', '{toAdd.Upc}', 0)";
+            List<MovieId> addedMovies = new List<MovieId>();
+            for(int i = 0; i < toAdd.Qty; i++)
+            {
+                var addMovieStringQuery = $"INSERT INTO {DatabaseUtils.Databasename}.movieinfo(MOV_INFO_TITLE, MOV_INFO_RELEASE_YEAR, MOV_INFO_GENRE, MOV_INFO_UPC, MOV_STATUS) " +
+                                          $"VALUES('{toAdd.Title}', '{toAdd.ReleaseYear}', '{toAdd.Genre}', '{toAdd.Upc}', 0)";
 
-            var addMovie = DatabaseUtils.Instance();
-            return addMovie.MakeDbQuery(addMovieStringQuery,true);
+                var addMovie = DatabaseUtils.Instance();
+                MovieId addedMovie = new MovieId();
+                addedMovie.Id = addMovie.MakeDbQuery(addMovieStringQuery, true);
+                addedMovies.Add(addedMovie);
+            }
+
+            return addedMovies;
         }
 
         public Movie GetMovieById(long movieId)

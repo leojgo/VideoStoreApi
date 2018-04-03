@@ -31,6 +31,7 @@ namespace VideoStoreApi.Models
         public string ReleaseYear { get; set; }
         public string Genre { get; set; }
         public string Upc { get; set; }
+        public int Qty { get; set; }
     }
 
     public class MovieId

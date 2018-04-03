@@ -15,21 +15,27 @@ namespace VideoStoreApi.Controllers
         public IActionResult Create([FromBody] NewMovie newMovie)  // Add New Movie
         {
             var newMovieUtils = new MovieUtils();
-            var addedMovie = new MovieId();
             try
             {
-                addedMovie.Id = newMovieUtils.AddMovie(newMovie);
-                if (addedMovie.Id > 0) //Create worked properly..
+                if (newMovie.Qty > 0)
                 {
-                    return Ok(addedMovie);
+                    List<MovieId> addedMovies = newMovieUtils.AddMovie(newMovie);
+                    foreach (var movId in addedMovies)
+                    {
+                        if (movId.Id <= 0) //Create worked properly..
+                        {
+                            return StatusCode(500, "Couldn't Add the Movie(s)!");
+                        }
+                    }
+                    return Ok(addedMovies);
+                    
                 }
-
-                return StatusCode(500, "Couldn't Add the Movie!");
+                return StatusCode(500, "You Selected 0 Copies of the movie...  I cant add 0!");
 
             }
             catch (Exception e)
             {
-                return StatusCode(500, "Couldn't Add the Movie!" + e);
+                return StatusCode(500, "Couldn't Add the Movie(s)!" + e);
             }
         }
     }
