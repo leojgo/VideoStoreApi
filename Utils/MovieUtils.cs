@@ -42,18 +42,8 @@ namespace VideoStoreApi.Utils
         public bool UpdateMovieInfo(Movie newMovieInfo)
         {
             string updateMovieInfoQuery;
-            if (newMovieInfo.Status != 0)
-            {
-                updateMovieInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
-                                           "SET " +
-                                           $"MOV_INFO_TITLE = '{newMovieInfo.Title}', " +
-                                           $"MOV_INFO_RELEASE_YEAR = '{newMovieInfo.ReleaseYear}', " +
-                                           $"MOV_INFO_GENRE = '{newMovieInfo.Genre}', " +
-                                           $"MOV_INFO_UPC = '{newMovieInfo.Upc}', " +
-                                           $"MOV_STATUS = '{newMovieInfo.Status}' " +
-                                           $"WHERE MOV_INFO_UNIQ_ID = '{newMovieInfo.MovieId}';";
-            }
-            else
+
+            if (newMovieInfo.Status == 0)
             {
                 updateMovieInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
                                            "SET " +
@@ -64,6 +54,17 @@ namespace VideoStoreApi.Utils
                                            $"MOV_STATUS = '{newMovieInfo.Status}', " +
                                            $"MOV_RETURN_DATE = null " +
                                            $"WHERE MOV_INFO_UNIQ_ID = '{newMovieInfo.MovieId}';";
+            }
+            else
+            {
+                updateMovieInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
+                                       "SET " +
+                                       $"MOV_INFO_TITLE = '{newMovieInfo.Title}', " +
+                                       $"MOV_INFO_RELEASE_YEAR = '{newMovieInfo.ReleaseYear}', " +
+                                       $"MOV_INFO_GENRE = '{newMovieInfo.Genre}', " +
+                                       $"MOV_INFO_UPC = '{newMovieInfo.Upc}', " +
+                                       $"MOV_STATUS = '{newMovieInfo.Status}' " +
+                                       $"WHERE MOV_INFO_UNIQ_ID = '{newMovieInfo.MovieId}';";
             }
 
 
