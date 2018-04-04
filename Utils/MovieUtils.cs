@@ -41,16 +41,34 @@ namespace VideoStoreApi.Utils
 
         public bool UpdateMovieInfo(Movie newMovieInfo)
         {
-            var updateMovieInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
-                                            "SET " +
-                                            $"MOV_INFO_TITLE = '{newMovieInfo.Title}', " +
-                                            $"MOV_INFO_RELEASE_YEAR = '{newMovieInfo.ReleaseYear}', " +
-                                            $"MOV_INFO_GENRE = '{newMovieInfo.Genre}', " +
-                                            $"MOV_INFO_UPC = '{newMovieInfo.Upc}', " +
-                                            $"MOV_STATUS = '{newMovieInfo.Status}' " +
-                                            $"WHERE MOV_INFO_UNIQ_ID = '{newMovieInfo.MovieId}';";
+            string updateMovieInfoQuery;
+            if (newMovieInfo.Status != 0)
+            {
+                updateMovieInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
+                                           "SET " +
+                                           $"MOV_INFO_TITLE = '{newMovieInfo.Title}', " +
+                                           $"MOV_INFO_RELEASE_YEAR = '{newMovieInfo.ReleaseYear}', " +
+                                           $"MOV_INFO_GENRE = '{newMovieInfo.Genre}', " +
+                                           $"MOV_INFO_UPC = '{newMovieInfo.Upc}', " +
+                                           $"MOV_STATUS = '{newMovieInfo.Status}' " +
+                                           $"WHERE MOV_INFO_UNIQ_ID = '{newMovieInfo.MovieId}';";
+            }
+            else
+            {
+                updateMovieInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
+                                           "SET " +
+                                           $"MOV_INFO_TITLE = '{newMovieInfo.Title}', " +
+                                           $"MOV_INFO_RELEASE_YEAR = '{newMovieInfo.ReleaseYear}', " +
+                                           $"MOV_INFO_GENRE = '{newMovieInfo.Genre}', " +
+                                           $"MOV_INFO_UPC = '{newMovieInfo.Upc}', " +
+                                           $"MOV_STATUS = '{newMovieInfo.Status}', " +
+                                           $"MOV_RETURN_DATE = null " +
+                                           $"WHERE MOV_INFO_UNIQ_ID = '{newMovieInfo.MovieId}';";
+            }
+
 
             var updateMovie = DatabaseUtils.Instance();
+
             return updateMovie.MakeDbQuery(updateMovieInfoQuery);
         }
 
@@ -111,6 +129,34 @@ namespace VideoStoreApi.Utils
             return SortedList;
         }
 
+        public bool BatchProcess(BatchMovieInput batchJob)
+        {
+            Movie newMovieInfo = new Movie();
+
+            foreach (var curMovie in batchJob.MovieList)
+            {
+                newMovieInfo.MovieId = curMovie.Id;
+                newMovieInfo.Genre = batchJob.Genre;
+                newMovieInfo.ReleaseYear = batchJob.ReleaseYear;
+                newMovieInfo.Status = curMovie.Status;
+                newMovieInfo.Title = batchJob.Title;
+                newMovieInfo.Upc = batchJob.Upc;
+
+                bool result = UpdateMovieInfo(newMovieInfo);
+
+                if (!result)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        
+
+
+
+        // PRIVATES
         private void CompareResults(List<Movie> newResults)
         {
             if (_searchResults != null)
@@ -134,10 +180,6 @@ namespace VideoStoreApi.Utils
                 }
             }
         }
-
-
-
-        // PRIVATES
         private Movie SqlGetMovieById(string dbQuery)
         {
             var temp = new Movie();
@@ -166,8 +208,6 @@ namespace VideoStoreApi.Utils
                 return null;
             return temp;
         }
-
-        // PRIVATES
         private List<Movie> SqlGetMoviesBySearch(string dbQuery)
         {
             var temp = new List<Movie>();

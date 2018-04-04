@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
@@ -43,6 +44,22 @@ namespace VideoStoreApi.Models
         public long Id { get; set; }
         public int Cost { get; set; }
         public string DueDate { get; set; }
+    }
+
+    
+    public class BatchMovieInput
+    {
+        public string Title { get; set; }
+        public string ReleaseYear { get; set; }
+        public string Genre { get; set; }
+        public string Upc { get; set; }
+        public List<MovieBatchList> MovieList { get; set; }
+    }
+
+    public class MovieBatchList
+    {
+        public long Id { get; set; }
+        public int Status { get; set; }
     }
 }
 
