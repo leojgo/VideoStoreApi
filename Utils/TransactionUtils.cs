@@ -37,7 +37,9 @@ namespace VideoStoreApi.Utils
                 trans.Date = DateTime.Now.ToString("yyyy-MM-dd");
                 trans.EmpId = forTrans.EmployeeId;
                 trans.Fees = 0;
-                trans.FeesPaid = 0;
+                trans.FeesPaid = forTrans.LateFeePaid;
+                trans.PymtCard = forTrans.PaymentCard;
+                trans.PymtType = forTrans.PaymentType;
                 trans.RemBalance = 0;
 
                 int runningCost = 0;
@@ -47,12 +49,12 @@ namespace VideoStoreApi.Utils
                     runningCost += movieCost.Cost;
                 }
 
-                trans.TotalPaid = runningCost;
+                trans.TotalPaid = runningCost + trans.FeesPaid;
                 trans.CustId = forTrans.CustomerId;
 
                 string newTransQuery =
-                    $"INSERT INTO {DatabaseUtils.Databasename}.transactions(TRANS_ID, TRANS_Date, TRANS_Employee, TRANS_Fees, TRANS_Fees_Paid, TRANS_Total_Paid, TRANS_Rem_Balance, TRANS_Cust_ID) " + 
-                    $"VALUES('{trans.TransId}', '{trans.Date}', '{trans.EmpId}', '{trans.Fees}', '{trans.FeesPaid}', '{trans.RemBalance}', '{trans.TotalPaid}', '{trans.CustId}');";
+                    $"INSERT INTO {DatabaseUtils.Databasename}.transactions(TRANS_ID, TRANS_Date, TRANS_Employee, TRANS_Fees, TRANS_Fees_Paid, TRANS_Total_Paid, TRANS_Rem_Balance, TRANS_Cust_ID, TRANS_Payment_Type, TRANS_Card_Num) " + 
+                    $"VALUES('{trans.TransId}', '{trans.Date}', '{trans.EmpId}', '{trans.Fees}', '{trans.FeesPaid}', '{trans.TotalPaid}', '{trans.RemBalance}', '{trans.CustId}', '{trans.PymtType}', '{trans.PymtCard}');";
 
                 
                 if (AddMov2TransInfo.MakeDbQuery(newTransQuery))

@@ -32,7 +32,11 @@ namespace VideoStoreApi.Controllers
     public class TransInput
     {
         public int EmployeeId { get; set; }
-        public List<Movies4Trans> MovieList { get; set; }
         public int CustomerId { get; set; }
+        public int LateFeePaid { get; set; }
+        public string PaymentType { get; set; }
+        public long PaymentCard { get; set; }
+        public List<Movies4Trans> MovieList { get; set; }
+        
     }
 }
