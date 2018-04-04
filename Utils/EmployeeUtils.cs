@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
+using VideoStoreApi.Controllers;
 using VideoStoreApi.Models;
 
 namespace VideoStoreApi.Utils
@@ -68,6 +69,24 @@ namespace VideoStoreApi.Utils
             return updateEmployee.MakeDbQuery(updateEmployeeInfoQuery);
         }
 
+        public bool EditEmployeePW(Login updatedEmployee)
+        {
+            if (PasswordUtils.IsPasswordFormatValid(updatedEmployee.Password))
+            {
+                var passwordHash = PasswordUtils.Hash(updatedEmployee.Password);
+
+                var updateEmployeeInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.employeelist " +
+                                              $"SET EMP_PW_Hash = '{passwordHash}' " +
+                                              $"WHERE EMP_ID = '{updatedEmployee.Username}';";
+
+                var updateEmployee = DatabaseUtils.Instance();
+                return updateEmployee.MakeDbQuery(updateEmployeeInfoQuery);
+            }
+
+            return false;
+        }
+
+
         public IEnumerable<EmployeeInfoToShare> GetAllEmployees()
         {
             var getAllemployeesQuery = $"SELECT * " +
@@ -112,22 +131,6 @@ namespace VideoStoreApi.Utils
             }
         }
 
-        //private Permission GetEmployeePermissions(int PermissionLvl)
-        //{
-        //    try
-        //    {
-        //        string sqlQueryString = "SELECT * " +
-        //                                $"FROM {DatabaseUtils.databasename}.employeepermissions " +
-        //                                $"WHERE EMP_Permiss = {PermissionLvl};";
-
-        //        return SqlGetEmployeePermissions(sqlQueryString, PermissionLvl);
-        //    }
-        //    catch
-        //    {
-        //        return null;
-        //    }
-        //}
-
         private string SqlGetEmployeeTitle(string dbQuery)
         {
             string employeeTitle = null;
@@ -160,48 +163,6 @@ namespace VideoStoreApi.Utils
 
             return toGet;
         }
-
-        //private Permission SqlGetEmployeePermissions(string dbQuery, int lookupKey)
-        //{
-        //    Permission temp = new Permission();
-
-        //    var dbCon = DatabaseUtils.Instance();
-        //    dbCon.DatabaseName = DatabaseUtils.databasename;
-        //    if (dbCon.IsConnect())
-        //    {
-        //        var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-        //        var reader = cmd.ExecuteReader();
-        //        while (reader.Read())
-        //        {
-        //            temp.EMP_Permiss = lookupKey;
-        //            temp.EMP_Create = reader.GetBoolean("EMP_Create");
-        //            temp.EMP_Edit = reader.GetBoolean("EMP_Edit");
-        //            temp.EMP_Disable = reader.GetBoolean("EMP_Disable");
-        //            temp.CUST_Create = reader.GetBoolean("CUST_Create");
-        //            temp.CUST_Edit = reader.GetBoolean("CUST_Edit");
-        //            temp.CUST_Disable = reader.GetBoolean("CUST_Disable");
-        //            temp.CUST_Search = reader.GetBoolean("CUST_Search");
-        //            temp.CUST_ViewHist = reader.GetBoolean("CUST_ViewHist");
-        //            temp.Cust_EditHist = reader.GetBoolean("Cust_EditHist");
-        //            temp.INV_Add = reader.GetBoolean("INV_Add");
-        //            temp.INV_Edit = reader.GetBoolean("INV_Edit");
-        //            temp.INV_Disable = reader.GetBoolean("INV_Disable");
-        //            temp.INV_Rent = reader.GetBoolean("INV_Rent");
-        //            temp.INV_Return = reader.GetBoolean("INV_Return");
-        //            temp.INV_Hold = reader.GetBoolean("INV_Hold");
-        //            temp.REP_Overdue = reader.GetBoolean("REP_Overdue");
-        //            temp.REP_Popular = reader.GetBoolean("REP_Popular");
-        //            temp.REP_CheckedOut = reader.GetBoolean("REP_CheckedOut");
-        //            temp.REP_OnHold = reader.GetBoolean("REP_OnHold");
-        //        }
-
-        //        dbCon.Close();
-        //    }
-
-        //    return temp;
-        //}
-
 
         //SQL Queries go Below!
         public Employee SqlGetEmployee(string dbQuery)

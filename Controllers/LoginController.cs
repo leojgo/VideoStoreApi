@@ -64,10 +64,7 @@ namespace VideoStoreApi.Controllers
             catch (Exception e)
             {
                 return NotFound($"Couldn't Login Employee {credentials.Username}! " + e);
-            }
-            
-
-            
+            }       
         }
     }
 
