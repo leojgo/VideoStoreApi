@@ -28,7 +28,7 @@ namespace VideoStoreApi.Controllers
 
     public class CustomerSearchInfo
     {
-        public long PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
         public string SearchTerm { get; set; }
     }
 }

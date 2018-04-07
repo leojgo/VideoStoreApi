@@ -125,7 +125,7 @@ namespace VideoStoreApi.Utils
                 CompareResults(tempSearchResults);
             }
 
-            if (searchinfo.PhoneNumber > 0)
+            if (searchinfo.PhoneNumber != null)
             {
                 var titleSearchQuery = "SELECT * " +
                                           $"FROM {DatabaseUtils.Databasename}.customers " +

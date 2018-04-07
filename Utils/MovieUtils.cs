@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using MySql.Data.MySqlClient;
+using VideoStoreApi.Controllers;
 using VideoStoreApi.Models;
 
 namespace VideoStoreApi.Utils
@@ -153,7 +154,29 @@ namespace VideoStoreApi.Utils
 
             return true;
         }
-        
+
+        public bool ReturnMovies(MovieList ToReturn)
+        {
+            string updateMovieInfoQuery;
+
+            foreach (var movie in ToReturn.movieList)
+            {
+                updateMovieInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
+                                           "SET " +
+                                           $"MOV_STATUS = '0', " +
+                                           $"MOV_RETURN_DATE = null " +
+                                           $"WHERE MOV_INFO_UNIQ_ID = '{movie.Id}';";
+
+                var updateMovie = DatabaseUtils.Instance();
+
+                if(!updateMovie.MakeDbQuery(updateMovieInfoQuery))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
 
 
 

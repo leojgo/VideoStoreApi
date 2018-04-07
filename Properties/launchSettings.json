@@ -2,28 +2,38 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/VideoStoreApi/",
+      "sslPort": 0
+    },
     "iisExpress": {
       "applicationUrl": "http://localhost:1444/",
       "sslPort": 0
     }
   },
   "profiles": {
-			"IIS Express": {
-				"commandName": "IISExpress",
-				"launchBrowser": true,
-				"launchUrl": "http://localhost:1444/index.html",
-				"environmentVariables": {
-					"ASPNETCORE_ENVIRONMENT": "Development"
-				}
-			},
-			"VideoStoreApi": {
-				"commandName": "Project",
-				"launchBrowser": true,
-				"launchUrl": "http://localhost:1444/index.html",
-				"environmentVariables": {
-					"ASPNETCORE_ENVIRONMENT": "Development"
-				},
-				"applicationUrl": "http://localhost:1444/"
-			}
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "http://localhost:1444/index.html",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "VideoStoreApi": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "http://localhost:1444/index.html",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:1444/"
+    },
+    "IIS": {
+      "commandName": "IIS",
+      "workingDirectory": "C:\\Users\\Administrator\\source\\repos\\VideoStoreApi",
+      "launchBrowser": true,
+      "launchUrl": "http://localhost:1444/index.html"
+    }
   }
 }
