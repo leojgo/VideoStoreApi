@@ -10,7 +10,7 @@ namespace VideoStoreApi.Controllers
     [Route("api/Login")]
     public class LoginController : Controller
     {
-        
+
 
 
         private readonly SessionContext _context;
@@ -18,7 +18,7 @@ namespace VideoStoreApi.Controllers
         public LoginController(SessionContext context)
         {
             _context = context;
-        }       
+        }
 
         //===========================================
 
@@ -55,16 +55,32 @@ namespace VideoStoreApi.Controllers
 
                 if (newEmployee != null)
                 {
-                    _context.Employees.Add(newEmployee);
-                    _context.SaveChanges();
-                    return CreatedAtRoute("LoginEmployee", new {id = newEmployee.EmployeeId}, newEmployee );
+                    if (!checkforSession(credentials.Username))
+                    {
+                        _context.Employees.Add(newEmployee);
+                        _context.SaveChanges();
+                        return CreatedAtRoute("LoginEmployee", new { id = newEmployee.EmployeeId }, newEmployee);
+                    }
+                    return Json(newEmployee);
+
+
                 }
                 return NotFound($"Couldn't Login Employee {credentials.Username}! ");
             }
             catch (Exception e)
             {
                 return NotFound($"Couldn't Login Employee {credentials.Username}! " + e);
-            }       
+            }
+        }
+
+        public bool checkforSession(int id)
+        {
+            var item = _context.Employees.FirstOrDefault(t => t.EmployeeId == id);
+            if (item == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 
