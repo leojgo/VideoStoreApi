@@ -167,7 +167,7 @@ namespace VideoStoreApi.Utils
                     temp.AddCity = reader.GetString($"CUST_Add_City");
                     temp.AddState = reader.GetString($"CUST_Add_State");
                     temp.AddZip = reader.GetInt32($"CUST_Add_Zip");
-                    temp.PhoneNumber = reader.GetInt64($"CUST_PhoneNumber");
+                    temp.PhoneNumber = reader.GetString($"CUST_PhoneNumber");
                     temp.Email = reader.GetString($"CUST_Email");
                     temp.Newsletter = reader.GetBoolean($"CUST_Newsletter");
                     temp.AccountBalance = reader.GetInt32($"CUST_AccountBalance");
@@ -236,7 +236,7 @@ namespace VideoStoreApi.Utils
                     cust.AddCity = reader.GetString($"CUST_Add_City");
                     cust.AddState = reader.GetString($"CUST_Add_State");
                     cust.AddZip = reader.GetInt32($"CUST_Add_Zip");
-                    cust.PhoneNumber = reader.GetInt64($"CUST_PhoneNumber");
+                    cust.PhoneNumber = reader.GetString($"CUST_PhoneNumber");
                     cust.Email = reader.GetString($"CUST_Email");
                     cust.Newsletter = reader.GetBoolean($"CUST_Newsletter");
                     cust.AccountBalance = reader.GetInt32($"CUST_AccountBalance");

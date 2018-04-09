@@ -11,7 +11,7 @@ namespace VideoStoreApi.Models
         public string AddCity { get; set; }
         public string AddState { get; set; }
         public int AddZip { get; set; }
-        public long PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public bool Newsletter { get; set; }
         public int AccountBalance { get; set; }
@@ -23,7 +23,7 @@ namespace VideoStoreApi.Models
         public int CustomerId { get; set; }
         public string NameFirst { get; set; }
         public string NameLast { get; set; }
-        public long PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
         public long TransactionCount { get; set; }
     }
 }

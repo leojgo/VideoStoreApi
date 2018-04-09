@@ -22,7 +22,7 @@ namespace VideoStoreApi.Models
         public string ReturnDate { get; set; }
         public string CustFirstName { get; set; }
         public string CustLastName { get; set; }
-        public long CustPhoneNumber { get; set; }
+        public string CustPhoneNumber { get; set; }
 
     }
 

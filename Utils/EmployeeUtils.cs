@@ -183,7 +183,7 @@ namespace VideoStoreApi.Utils
                     temp.PwHash = reader.GetString("EMP_PW_Hash");
                     temp.Active = reader.GetBoolean("EMP_Active");
                     temp.EmployeeType = reader.GetInt32("EMP_Type");
-                    temp.PhoneNumber = reader.GetInt64("EMP_PhoneNumber");
+                    temp.PhoneNumber = reader.GetString("EMP_PhoneNumber");
                 }
 
                 dbCon.Close();
@@ -214,7 +214,7 @@ namespace VideoStoreApi.Utils
                     temp.PwHash = reader.GetString("EMP_PW_Hash");
                     temp.Active = reader.GetBoolean("EMP_Active");
                     temp.EmployeeType = reader.GetInt32("EMP_Type");
-                    temp.PhoneNumber = reader.GetInt64("EMP_PhoneNumber");
+                    temp.PhoneNumber = reader.GetString("EMP_PhoneNumber");
                     allEmployees.Add(temp);
                 }
 

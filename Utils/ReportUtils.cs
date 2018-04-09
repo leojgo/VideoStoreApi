@@ -264,7 +264,7 @@ namespace VideoStoreApi.Utils
                     temp.CustomerId = reader.GetInt32($"CUST_ID");
                     temp.NameFirst = reader.GetString($"CUST_Name_First");
                     temp.NameLast = reader.GetString($"CUST_Name_Last");
-                    temp.PhoneNumber = reader.GetInt64($"CUST_PhoneNumber");
+                    temp.PhoneNumber = reader.GetString($"CUST_PhoneNumber");
                 }
 
                 dbCon.Close();

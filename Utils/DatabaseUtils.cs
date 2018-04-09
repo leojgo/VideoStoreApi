@@ -58,7 +58,7 @@ namespace VideoStoreApi.Utils
                     _connection = new MySqlConnection(connstring);
                     _connection.Open();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     if (_connection.Ping())
                     {
@@ -91,14 +91,12 @@ namespace VideoStoreApi.Utils
                         dbCon.Close();
                         return true;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         dbQuery = null;
                         dbCon.Close();
                         return false;
                     }
-                dbQuery = null;
-                dbCon.Close();
             }
 
             return false;
@@ -124,16 +122,13 @@ namespace VideoStoreApi.Utils
                     dbCon.Close();
                     return key;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     dbQuery = null;
                     dbCon.Close();
                     return key;
                 }
-                dbQuery = null;
-                dbCon.Close();
             }
-
             return key;
         }
 
@@ -156,7 +151,7 @@ namespace VideoStoreApi.Utils
                     }
                     return lastInsertedKey;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return lastInsertedKey;
                 }

@@ -38,7 +38,7 @@ namespace VideoStoreApi.Controllers
             }
             catch (Exception e)
             {
-                return NotFound($"There is no Info for Permission Level {id}");
+                return NotFound($"There is no Info for Permission Level {id}! " + e);
             }
         }
 
