@@ -189,7 +189,7 @@ namespace VideoStoreApi.Utils
 
                         mov.MovieId = reader.GetInt64("MOV_INFO_UNIQ_ID");
                         mov.Title = reader.GetString("MOV_INFO_TITLE");
-                        mov.ReturnDate = reader.GetString("MOV_RETURN_DATE");
+                        mov.ReturnDate = reader.GetString("MOV_STATUS_DATE");
 
                         temp.Add(mov);
                         mov = null;
