@@ -145,42 +145,50 @@ namespace VideoStoreApi.Utils
             var temp = new Customer();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    temp.CustomerId = reader.GetInt32($"CUST_ID");
-                    temp.NameFirst = reader.GetString($"CUST_Name_First");
-                    temp.NameMiddleIn = reader.GetString($"CUST_Name_Middle_In");
-                    temp.NameLast = reader.GetString($"CUST_Name_Last");
-                    temp.AddLine1 = reader.GetString($"CUST_Add_Line1");
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
 
-                    var location = reader.GetOrdinal($"CUST_Add_Line2");
-                    if (!reader.IsDBNull(location))
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        temp.AddLine2 = reader.GetString($"CUST_Add_Line2");
+                        temp.CustomerId = reader.GetInt32($"CUST_ID");
+                        temp.NameFirst = reader.GetString($"CUST_Name_First");
+                        temp.NameMiddleIn = reader.GetString($"CUST_Name_Middle_In");
+                        temp.NameLast = reader.GetString($"CUST_Name_Last");
+                        temp.AddLine1 = reader.GetString($"CUST_Add_Line1");
+
+                        var location = reader.GetOrdinal($"CUST_Add_Line2");
+                        if (!reader.IsDBNull(location))
+                        {
+                            temp.AddLine2 = reader.GetString($"CUST_Add_Line2");
+                        }
+
+                        temp.AddCity = reader.GetString($"CUST_Add_City");
+                        temp.AddState = reader.GetString($"CUST_Add_State");
+                        temp.AddZip = reader.GetInt32($"CUST_Add_Zip");
+                        temp.PhoneNumber = reader.GetString($"CUST_PhoneNumber");
+                        temp.Email = reader.GetString($"CUST_Email");
+                        temp.Newsletter = reader.GetBoolean($"CUST_Newsletter");
+                        temp.AccountBalance = reader.GetInt32($"CUST_AccountBalance");
+                        temp.Active = reader.GetBoolean($"CUST_Active");
                     }
 
-                    temp.AddCity = reader.GetString($"CUST_Add_City");
-                    temp.AddState = reader.GetString($"CUST_Add_State");
-                    temp.AddZip = reader.GetInt32($"CUST_Add_Zip");
-                    temp.PhoneNumber = reader.GetString($"CUST_PhoneNumber");
-                    temp.Email = reader.GetString($"CUST_Email");
-                    temp.Newsletter = reader.GetBoolean($"CUST_Newsletter");
-                    temp.AccountBalance = reader.GetInt32($"CUST_AccountBalance");
-                    temp.Active = reader.GetBoolean($"CUST_Active");
+                    dbCon.Close();
                 }
 
-                dbCon.Close();
+                if (temp.CustomerId == 0)
+                    //No Match in the DB
+                    return null;
+                return temp;
             }
-
-            if (temp.CustomerId == 0)
-                //No Match in the DB
+            catch
+            {
+                dbCon.Close();
                 return null;
-            return temp;
+            }
         }
 
         private void CompareResults(List<Customer> newResults)
@@ -212,43 +220,51 @@ namespace VideoStoreApi.Utils
             var temp = new List<Customer>();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    var cust = new Customer();
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
 
-                    cust.CustomerId = reader.GetInt32($"CUST_ID");
-                    cust.NameFirst = reader.GetString($"CUST_Name_First");
-                    cust.NameMiddleIn = reader.GetString($"CUST_Name_Middle_In");
-                    cust.NameLast = reader.GetString($"CUST_Name_Last");
-                    cust.AddLine1 = reader.GetString($"CUST_Add_Line1");
-
-                    var location = reader.GetOrdinal($"CUST_Add_Line2");
-                    if (!reader.IsDBNull(location))
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        cust.AddLine2 = reader.GetString($"CUST_Add_Line2");
+                        var cust = new Customer();
+
+                        cust.CustomerId = reader.GetInt32($"CUST_ID");
+                        cust.NameFirst = reader.GetString($"CUST_Name_First");
+                        cust.NameMiddleIn = reader.GetString($"CUST_Name_Middle_In");
+                        cust.NameLast = reader.GetString($"CUST_Name_Last");
+                        cust.AddLine1 = reader.GetString($"CUST_Add_Line1");
+
+                        var location = reader.GetOrdinal($"CUST_Add_Line2");
+                        if (!reader.IsDBNull(location))
+                        {
+                            cust.AddLine2 = reader.GetString($"CUST_Add_Line2");
+                        }
+
+                        cust.AddCity = reader.GetString($"CUST_Add_City");
+                        cust.AddState = reader.GetString($"CUST_Add_State");
+                        cust.AddZip = reader.GetInt32($"CUST_Add_Zip");
+                        cust.PhoneNumber = reader.GetString($"CUST_PhoneNumber");
+                        cust.Email = reader.GetString($"CUST_Email");
+                        cust.Newsletter = reader.GetBoolean($"CUST_Newsletter");
+                        cust.AccountBalance = reader.GetInt32($"CUST_AccountBalance");
+                        cust.Active = reader.GetBoolean($"CUST_Active");
+
+                        temp.Add(cust);
+                        cust = null;
                     }
 
-                    cust.AddCity = reader.GetString($"CUST_Add_City");
-                    cust.AddState = reader.GetString($"CUST_Add_State");
-                    cust.AddZip = reader.GetInt32($"CUST_Add_Zip");
-                    cust.PhoneNumber = reader.GetString($"CUST_PhoneNumber");
-                    cust.Email = reader.GetString($"CUST_Email");
-                    cust.Newsletter = reader.GetBoolean($"CUST_Newsletter");
-                    cust.AccountBalance = reader.GetInt32($"CUST_AccountBalance");
-                    cust.Active = reader.GetBoolean($"CUST_Active");
-
-                    temp.Add(cust);
-                    cust = null;
+                    dbCon.Close();
                 }
-
-                dbCon.Close();
+                return temp;
             }
-            return temp;
+            catch
+            {
+                dbCon.Close();
+                return null;
+            }
         }
     }
 }

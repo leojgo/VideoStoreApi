@@ -170,29 +170,37 @@ namespace VideoStoreApi.Utils
             var temp = new Employee();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    temp.EmployeeId = reader.GetInt32("EMP_ID");
-                    temp.FirstName = reader.GetString("EMP_Name_First");
-                    temp.LastName = reader.GetString("EMP_Name_Last");
-                    temp.PwHash = reader.GetString("EMP_PW_Hash");
-                    temp.Active = reader.GetBoolean("EMP_Active");
-                    temp.EmployeeType = reader.GetInt32("EMP_Type");
-                    temp.PhoneNumber = reader.GetString("EMP_PhoneNumber");
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        temp.EmployeeId = reader.GetInt32("EMP_ID");
+                        temp.FirstName = reader.GetString("EMP_Name_First");
+                        temp.LastName = reader.GetString("EMP_Name_Last");
+                        temp.PwHash = reader.GetString("EMP_PW_Hash");
+                        temp.Active = reader.GetBoolean("EMP_Active");
+                        temp.EmployeeType = reader.GetInt32("EMP_Type");
+                        temp.PhoneNumber = reader.GetString("EMP_PhoneNumber");
+                    }
+
+                    dbCon.Close();
                 }
 
-                dbCon.Close();
+                if (temp.EmployeeId == 0)
+                    //No Match in the DB
+                    return null;
+                return temp;
             }
-
-            if (temp.EmployeeId == 0)
-                //No Match in the DB
+            catch
+            {
+                dbCon.Close();
                 return null;
-            return temp;
+            }
         }
 
         public List<Employee> SqlGetAllEmployees(string dbQuery)
@@ -200,28 +208,36 @@ namespace VideoStoreApi.Utils
             var allEmployees  = new List<Employee>();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    var temp = new Employee();
-                    temp.EmployeeId = reader.GetInt32("EMP_ID");
-                    temp.FirstName = reader.GetString("EMP_Name_First");
-                    temp.LastName = reader.GetString("EMP_Name_Last");
-                    temp.PwHash = reader.GetString("EMP_PW_Hash");
-                    temp.Active = reader.GetBoolean("EMP_Active");
-                    temp.EmployeeType = reader.GetInt32("EMP_Type");
-                    temp.PhoneNumber = reader.GetString("EMP_PhoneNumber");
-                    allEmployees.Add(temp);
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        var temp = new Employee();
+                        temp.EmployeeId = reader.GetInt32("EMP_ID");
+                        temp.FirstName = reader.GetString("EMP_Name_First");
+                        temp.LastName = reader.GetString("EMP_Name_Last");
+                        temp.PwHash = reader.GetString("EMP_PW_Hash");
+                        temp.Active = reader.GetBoolean("EMP_Active");
+                        temp.EmployeeType = reader.GetInt32("EMP_Type");
+                        temp.PhoneNumber = reader.GetString("EMP_PhoneNumber");
+                        allEmployees.Add(temp);
+                    }
+
+                    dbCon.Close();
                 }
 
-                dbCon.Close();
+                return allEmployees;
             }
-
-            return allEmployees;
+            catch
+            {
+                dbCon.Close();
+                return null;
+            }
         }
     }
 }

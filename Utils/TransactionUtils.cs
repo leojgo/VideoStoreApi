@@ -82,23 +82,31 @@ namespace VideoStoreApi.Utils
             int maxKey = 1;
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    var location = reader.GetOrdinal("MAX(`TRANS2MOV_TRANS_ID`)");
-                    if (!reader.IsDBNull(location))
-                    {
-                        maxKey = reader.GetInt32("MAX(`TRANS2MOV_TRANS_ID`)") + 1;
-                    }
-                }
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
 
-                dbCon.Close();
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        var location = reader.GetOrdinal("MAX(`TRANS2MOV_TRANS_ID`)");
+                        if (!reader.IsDBNull(location))
+                        {
+                            maxKey = reader.GetInt32("MAX(`TRANS2MOV_TRANS_ID`)") + 1;
+                        }
+                    }
+
+                    dbCon.Close();
+                }
+                return maxKey;
             }
-            return maxKey;
+            catch
+            {
+                dbCon.Close();
+                return -1;
+            }
         }
     }
 }

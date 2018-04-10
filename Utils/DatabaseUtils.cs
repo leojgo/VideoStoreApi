@@ -81,9 +81,11 @@ namespace VideoStoreApi.Utils
         {
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+                if (dbCon.IsConnect())
+                {
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
                     try
                     {
                         cmd.ExecuteNonQuery();
@@ -97,9 +99,15 @@ namespace VideoStoreApi.Utils
                         dbCon.Close();
                         return false;
                     }
-            }
+                }
 
-            return false;
+                return false;
+            }
+            catch
+            {
+                dbCon.Close();
+                return false;
+            }
         }
 
 
@@ -108,28 +116,36 @@ namespace VideoStoreApi.Utils
             var key = -1;
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-                try
+                if (dbCon.IsConnect())
                 {
-                    cmd.ExecuteNonQuery();
-                    dbQuery = null;
-                    if (getLastKey)
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+                    try
                     {
-                        key = SQL_GetLastInsertedId();
+                        cmd.ExecuteNonQuery();
+                        dbQuery = null;
+                        if (getLastKey)
+                        {
+                            key = SQL_GetLastInsertedId();
+                        }
+                        dbCon.Close();
+                        return key;
                     }
-                    dbCon.Close();
-                    return key;
+                    catch (Exception)
+                    {
+                        dbQuery = null;
+                        dbCon.Close();
+                        return key;
+                    }
                 }
-                catch (Exception)
-                {
-                    dbQuery = null;
-                    dbCon.Close();
-                    return key;
-                }
+                return key;
             }
-            return key;
+            catch
+            {
+                dbCon.Close();
+                return -1;
+            }
         }
 
 
@@ -139,25 +155,33 @@ namespace VideoStoreApi.Utils
             var lastInsertedKey = -1;
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-                try
+                if (dbCon.IsConnect())
                 {
-                    var reader = cmd.ExecuteReader();
-                    while (reader.Read())
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+                    try
                     {
-                        lastInsertedKey = reader.GetInt32(0);
+                        var reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            lastInsertedKey = reader.GetInt32(0);
+                        }
+                        return lastInsertedKey;
                     }
-                    return lastInsertedKey;
+                    catch (Exception)
+                    {
+                        return lastInsertedKey;
+                    }
                 }
-                catch (Exception)
-                {
-                    return lastInsertedKey;
-                }
-            }
 
-            return lastInsertedKey;
+                return lastInsertedKey;
+            }
+            catch
+            {
+                dbCon.Close();
+                return -1;
+            }
         }
 
     }

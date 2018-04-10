@@ -114,7 +114,7 @@ namespace VideoStoreApi.Utils
                 CompareResults(tempSearchResults);
             }
 
-            if (searchinfo.Upc != null)
+            if (searchinfo.Upc != null && searchinfo.Upc != "")
             {
                 var upcSearchQuery = "SELECT * " +
                                           $"FROM {DatabaseUtils.Databasename}.movieinfo " +
@@ -126,9 +126,16 @@ namespace VideoStoreApi.Utils
                 CompareResults(tempSearchResults);
             }
 
-            List<Movie> SortedList = _searchResults.OrderBy(o=>o.Upc).ToList();
+            if (_searchResults != null)
+            {
+                if (_searchResults.Count >= 1)
+                {
+                    List<Movie> SortedList = _searchResults.OrderBy(o => o.Upc).ToList();
 
-            return SortedList;
+                    return SortedList;
+                }
+            }
+            return null;
         }
 
         public bool BatchProcess(BatchMovieInput batchJob)
@@ -209,57 +216,73 @@ namespace VideoStoreApi.Utils
             var temp = new Movie();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    temp.MovieId = reader.GetInt64("MOV_INFO_UNIQ_ID");
-                    temp.Title = reader.GetString("MOV_INFO_TITLE");
-                    temp.ReleaseYear = reader.GetString("MOV_INFO_RELEASE_YEAR");
-                    temp.Genre = reader.GetString("MOV_INFO_GENRE");
-                    temp.Upc = reader.GetString("MOV_INFO_UPC");
-                    temp.Status = reader.GetInt32("MOV_STATUS");
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        temp.MovieId = reader.GetInt64("MOV_INFO_UNIQ_ID");
+                        temp.Title = reader.GetString("MOV_INFO_TITLE");
+                        temp.ReleaseYear = reader.GetString("MOV_INFO_RELEASE_YEAR");
+                        temp.Genre = reader.GetString("MOV_INFO_GENRE");
+                        temp.Upc = reader.GetString("MOV_INFO_UPC");
+                        temp.Status = reader.GetInt32("MOV_STATUS");
+                    }
+
+                    dbCon.Close();
                 }
 
-                dbCon.Close();
+                if (temp.MovieId == 0)
+                    //No Match in the DB
+                    return null;
+                return temp;
             }
-
-            if (temp.MovieId == 0)
-                //No Match in the DB
+            catch
+            {
+                dbCon.Close();
                 return null;
-            return temp;
+            }
         }
         private List<Movie> SqlGetMoviesBySearch(string dbQuery)
         {
             var temp = new List<Movie>();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    var mov = new Movie();
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
 
-                    mov.MovieId = reader.GetInt64("MOV_INFO_UNIQ_ID");
-                    mov.Title = reader.GetString("MOV_INFO_TITLE");
-                    mov.ReleaseYear = reader.GetString("MOV_INFO_RELEASE_YEAR");
-                    mov.Genre = reader.GetString("MOV_INFO_GENRE");
-                    mov.Upc = reader.GetString("MOV_INFO_UPC");
-                    mov.Status = reader.GetInt32("MOV_STATUS");
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        var mov = new Movie();
 
-                    temp.Add(mov);
-                    mov = null;
+                        mov.MovieId = reader.GetInt64("MOV_INFO_UNIQ_ID");
+                        mov.Title = reader.GetString("MOV_INFO_TITLE");
+                        mov.ReleaseYear = reader.GetString("MOV_INFO_RELEASE_YEAR");
+                        mov.Genre = reader.GetString("MOV_INFO_GENRE");
+                        mov.Upc = reader.GetString("MOV_INFO_UPC");
+                        mov.Status = reader.GetInt32("MOV_STATUS");
+
+                        temp.Add(mov);
+                        mov = null;
+                    }
+
+                    dbCon.Close();
                 }
-
-                dbCon.Close();
+                return temp;
             }
-            return temp;
+            catch(Exception e)
+            {
+                dbCon.Close();
+                return null;
+            }
         }
 
     }

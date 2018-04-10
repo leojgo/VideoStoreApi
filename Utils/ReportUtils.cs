@@ -142,24 +142,33 @@ namespace VideoStoreApi.Utils
             var temp = new List<Movie2ClassResults>();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    Movie2ClassResults results = new Movie2ClassResults();
-                    results.MovieId = reader.GetInt32("TRANS2MOV_MOV_ID");
-                    results.count = reader.GetInt32("count(TRANS2MOV_MOV_ID)");
-                    
-                    temp.Add(results);
-                    results = null;
-                }
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
 
-                dbCon.Close();
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Movie2ClassResults results = new Movie2ClassResults();
+                        results.MovieId = reader.GetInt32("TRANS2MOV_MOV_ID");
+                        results.count = reader.GetInt32("count(TRANS2MOV_MOV_ID)");
+
+                        temp.Add(results);
+                        results = null;
+                    }
+
+                    dbCon.Close();
+                }
+                return temp;
             }
-            return temp;
+            catch
+            {
+                dbCon.Close();
+                return null;
+            }
+            
         }
 
         private List<MovieTitles> SqlGetMovieList(string dbQuery)
@@ -167,26 +176,34 @@ namespace VideoStoreApi.Utils
             var temp = new List<MovieTitles>();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    var mov = new MovieTitles();
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
 
-                    mov.MovieId = reader.GetInt64("MOV_INFO_UNIQ_ID");
-                    mov.Title = reader.GetString("MOV_INFO_TITLE");
-                    mov.ReturnDate = reader.GetString("MOV_RETURN_DATE");
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        var mov = new MovieTitles();
 
-                    temp.Add(mov);
-                    mov = null;
+                        mov.MovieId = reader.GetInt64("MOV_INFO_UNIQ_ID");
+                        mov.Title = reader.GetString("MOV_INFO_TITLE");
+                        mov.ReturnDate = reader.GetString("MOV_RETURN_DATE");
+
+                        temp.Add(mov);
+                        mov = null;
+                    }
+
+                    dbCon.Close();
                 }
-
-                dbCon.Close();
+                return temp;
             }
-            return temp;
+            catch
+            {
+                dbCon.Close();
+                return null;
+            }
         }
 
         private string SqlGetMovieById(string dbQuery)
@@ -194,19 +211,27 @@ namespace VideoStoreApi.Utils
             string temp = null;
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    temp = reader.GetString("MOV_INFO_TITLE");
-                }
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
 
-                dbCon.Close();
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        temp = reader.GetString("MOV_INFO_TITLE");
+                    }
+
+                    dbCon.Close();
+                }
+                return temp;
             }
-            return temp;
+            catch
+            {
+                dbCon.Close();
+                return null;
+            }
         }
 
         private long SqlGetTransInfo(string dbQuery)
@@ -214,19 +239,27 @@ namespace VideoStoreApi.Utils
             long temp = 0;
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    temp = reader.GetInt64("MAX(TRANS2MOV_TRANS_ID)");
-                }
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
 
-                dbCon.Close();
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        temp = reader.GetInt64("MAX(TRANS2MOV_TRANS_ID)");
+                    }
+
+                    dbCon.Close();
+                }
+                return temp;
             }
-            return temp;
+            catch
+            {
+                dbCon.Close();
+                return -1;
+            }
         }
 
         private long SqlGetCustomerInfo(string dbQuery)
@@ -234,19 +267,27 @@ namespace VideoStoreApi.Utils
             long temp = 0;
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    temp = reader.GetInt64("TRANS_Cust_ID");
-                }
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
 
-                dbCon.Close();
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        temp = reader.GetInt64("TRANS_Cust_ID");
+                    }
+
+                    dbCon.Close();
+                }
+                return temp;
             }
-            return temp;
+            catch
+            {
+                dbCon.Close();
+                return -1;
+            }
         }
 
         private Customer SqlGetCustomerById(string dbQuery)
@@ -254,26 +295,34 @@ namespace VideoStoreApi.Utils
             var temp = new Customer();
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    temp.CustomerId = reader.GetInt32($"CUST_ID");
-                    temp.NameFirst = reader.GetString($"CUST_Name_First");
-                    temp.NameLast = reader.GetString($"CUST_Name_Last");
-                    temp.PhoneNumber = reader.GetString($"CUST_PhoneNumber");
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
+
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        temp.CustomerId = reader.GetInt32($"CUST_ID");
+                        temp.NameFirst = reader.GetString($"CUST_Name_First");
+                        temp.NameLast = reader.GetString($"CUST_Name_Last");
+                        temp.PhoneNumber = reader.GetString($"CUST_PhoneNumber");
+                    }
+
+                    dbCon.Close();
                 }
 
-                dbCon.Close();
+                if (temp.CustomerId == 0)
+                    //No Match in the DB
+                    return null;
+                return temp;
             }
-
-            if (temp.CustomerId == 0)
-                //No Match in the DB
+            catch
+            {
+                dbCon.Close();
                 return null;
-            return temp;
+            }
         }
 
         private List<PopularCustomerInfo> SqlGetCustIDs(string dbQuery, int numberOfResults)
@@ -282,29 +331,37 @@ namespace VideoStoreApi.Utils
             int numOfEntriesRead = 0;
             var dbCon = DatabaseUtils.Instance();
             dbCon.DatabaseName = DatabaseUtils.Databasename;
-            if (dbCon.IsConnect())
+            try
             {
-                var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
-
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (dbCon.IsConnect())
                 {
-                    var curCust = new PopularCustomerInfo();
+                    var cmd = new MySqlCommand(dbQuery, dbCon.Connection);
 
-                    curCust.customerId = reader.GetInt64($"TRANS_CUST_ID");
-                    curCust.transactionCount = reader.GetInt32($"count");
-
-                    temp.Add(curCust);
-                    numOfEntriesRead++;
-                    if (numOfEntriesRead >= numberOfResults)
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
                     {
-                        break;
-                    }
-                }
+                        var curCust = new PopularCustomerInfo();
 
-                dbCon.Close();
+                        curCust.customerId = reader.GetInt64($"TRANS_CUST_ID");
+                        curCust.transactionCount = reader.GetInt32($"count");
+
+                        temp.Add(curCust);
+                        numOfEntriesRead++;
+                        if (numOfEntriesRead >= numberOfResults)
+                        {
+                            break;
+                        }
+                    }
+
+                    dbCon.Close();
+                }
+                return temp;
             }
-            return temp;
+            catch
+            {
+                dbCon.Close();
+                return null;
+            }
         }
     }
 
