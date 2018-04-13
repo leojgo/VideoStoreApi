@@ -12,6 +12,9 @@ namespace VideoStoreApi.Utils
 {
     public class MovieUtils
     {
+
+        private int searchLimit = 100; 
+
         private List<Movie> _searchResults = null;
 
         public List<MovieId> AddMovie(NewMovie toAdd)
@@ -83,7 +86,8 @@ namespace VideoStoreApi.Utils
                 var genreSearchQuery = "SELECT * " +
                                           $"FROM {DatabaseUtils.Databasename}.movieinfo " +
                                           $"WHERE MOV_INFO_GENRE " +
-                                          $"LIKE \"%{searchinfo.Genre}%\";";
+                                          $"LIKE \"%{searchinfo.Genre}%\"" +
+                                          $"LIMIT {searchLimit};";
 
                 var tempSearchResults = SqlGetMoviesBySearch(genreSearchQuery);
 
@@ -95,7 +99,8 @@ namespace VideoStoreApi.Utils
                 var yearSearchQuery = "SELECT * " +
                                           $"FROM {DatabaseUtils.Databasename}.movieinfo " +
                                           $"WHERE MOV_INFO_RELEASE_YEAR " +
-                                          $"LIKE \"%{searchinfo.ReleaseYear}%\";";
+                                          $"LIKE \"%{searchinfo.ReleaseYear}%\"" +
+                                          $"LIMIT {searchLimit};";
 
                 var tempSearchResults = SqlGetMoviesBySearch(yearSearchQuery);
 
@@ -107,7 +112,8 @@ namespace VideoStoreApi.Utils
                 var titleSearchQuery = "SELECT * " +
                                           $"FROM {DatabaseUtils.Databasename}.movieinfo " +
                                           $"WHERE MOV_INFO_TITLE " + 
-                                          $"LIKE \"%{searchinfo.Title}%\";";
+                                          $"LIKE \"%{searchinfo.Title}%\"" +
+                                          $"LIMIT {searchLimit};";
 
                 var tempSearchResults = SqlGetMoviesBySearch(titleSearchQuery);
 
@@ -119,7 +125,8 @@ namespace VideoStoreApi.Utils
                 var upcSearchQuery = "SELECT * " +
                                           $"FROM {DatabaseUtils.Databasename}.movieinfo " +
                                           $"WHERE MOV_INFO_UPC " +
-                                          $"LIKE \"%{searchinfo.Upc}%\";";
+                                          $"LIKE \"%{searchinfo.Upc}%\"" +
+                                          $"LIMIT {searchLimit};";
 
                 var tempSearchResults = SqlGetMoviesBySearch(upcSearchQuery);
 
