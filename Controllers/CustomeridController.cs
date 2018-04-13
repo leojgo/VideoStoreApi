@@ -63,10 +63,11 @@ namespace VideoStoreApi.Controllers
 
         //Updates Customer
         [HttpPost("{id}")]
-        public IActionResult UpdateInfo([FromBody] Customer customer)
+        public IActionResult UpdateInfo([FromBody] Customer customer, int id)
         {
 
             var newCustUtil = new CustomerUtils();
+            customer.CustomerId = id;
             try
             {
                 var result = newCustUtil.UpdateCustomer(customer);
@@ -74,9 +75,10 @@ namespace VideoStoreApi.Controllers
                 if (result)
                 {
                     //SUCCESS
-                    _context.Customers.Add(customer);
-                    _context.SaveChanges();
-                    return CreatedAtRoute("GetCustomer", new {id = customer.CustomerId}, customer);
+                    //_context.Customers.Add(customer);
+                    //_context.SaveChanges();
+                    //return CreatedAtRoute("GetCustomer", new {id = customer.CustomerId}, customer);
+                    return NoContent();
                 }
                 return BadRequest($"Couldn't Update Customer!");
             }
