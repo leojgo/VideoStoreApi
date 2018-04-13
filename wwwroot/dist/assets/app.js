@@ -11864,9 +11864,10 @@ Vue$3.compile = compileToFunctions;
       var query = document.querySelector("input[name=movieKeyword]").value;
       this.$router.app.$emit('searchMovie', query);
     },
-    view(upc) {
+    view(movie) {
       console.log('emit view view');
-      this.$router.app.$emit('viewMovie', upc);
+      console.log(movie);
+      this.$router.app.$emit('viewMovie', movie);
     },
     editForm(id) {
       //this.$router.app.$emit('cancelEdit');
@@ -11920,7 +11921,7 @@ Vue$3.compile = compileToFunctions;
         var inputVal = inputField.value;
         //check for empty inputs
         //TODO trim whitespace
-        if (inputVal.length < 1) {
+        if (inputVal.length < 1 && input != "movieYear") {
           this.errors[input] = true;
           this.hasError = true;
         } else {
@@ -11928,7 +11929,7 @@ Vue$3.compile = compileToFunctions;
             //UPC has chars that aren't integers
             this.errors[input] = true;
             this.hasError = true;
-          } else if (input == "movieYear") {
+          } else if (input == "movieYear" && inputVal.length > 0) {
             var movieYear = parseInt(inputVal);
             var today = new Date();
             if (movieYear < 1888 || movieYear > today.getFullYear()) {
@@ -11963,14 +11964,14 @@ Vue$3.compile = compileToFunctions;
         }
       }
     },
-    cancelEdit(upc) {
+    cancelEdit(movie) {
       //get rid of any error highlighting
       for (var input in this.errors) {
         this.errors[input] = false;
       }
       //reset to initial values
-      this.$router.app.$emit('cancelEdit');
-      this.$router.app.$emit('viewMovie', upc);
+      //this.$router.app.$emit('cancelEdit');
+      this.$router.app.$emit('viewMovie', movie);
     }
   },
   computed: {
@@ -12282,6 +12283,7 @@ Vue$3.compile = compileToFunctions;
           customer.active = true;
           customer["customerId"] = this.customerToEdit;
           console.log('emit updateCustomer');
+          console.log(customer);
           this.$router.app.$emit('updateCustomer', customer);
         }
       }
@@ -12690,7 +12692,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-console = {};
+//console = {};
 console.log = function () {};
 //silence logging for now
 
@@ -12772,13 +12774,25 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
       var jsonData;
       if (data.isNew) {
         var RawPw = employee.RawPw;
-        jsonData = JSON.stringify({ "FirstName": FirstName, "LastName": LastName, "EmployeeType": EmployeeType, "PhoneNumber": PhoneNumber, "RawPw": RawPw });
+        jsonData = JSON.stringify({
+          "FirstName": FirstName,
+          "LastName": LastName,
+          "EmployeeType": EmployeeType,
+          "PhoneNumber": PhoneNumber,
+          "RawPw": RawPw
+        });
       } else {
         //update employee info
         var url = "/api/Employee/" + employee.employeeId;
         var Active = employee.active;
         var EmployeeTitle = employee.employeeTitle; //TODO remove?
-        jsonData = JSON.stringify({ "FirstName": FirstName, "LastName": LastName, "EmployeeType": EmployeeType, "PhoneNumber": PhoneNumber, "active": Active });
+        jsonData = JSON.stringify({
+          "FirstName": FirstName,
+          "LastName": LastName,
+          "EmployeeType": EmployeeType,
+          "PhoneNumber": PhoneNumber,
+          "active": Active
+        });
       }
 
       xhr.open("POST", url, true);
@@ -12787,17 +12801,7 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
         //Call a function when the state changes.
         if (xhr.readyState == 4 && (xhr.status == 204 || xhr.status == 200)) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
-          if (data.isNew) {
-            var employee = JSON.parse(this.responseText);
-            console.log(employee);
-            modal.title = 'New Employee Added';
-            modal.body = "Employee " + employee.employeeId + " has been added to the Lackluster Video system users.";
-            data.isNew = false; //TODO cleanup/move?
-            //TODO confirmation in UI?
-          } else {}
-            //TODO confirmation in UI?
-
-            //TODO show modal confirmation?
+          //TODO show modal confirmation?
           data.isEdit = false; //TODO cleanup/move?
           vm.$router.push(callbackRoute);
         } else {
@@ -12843,25 +12847,43 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
       var url = "/api/Customers"; //for new
       var vm = this;
 
-      var name_First = customer.firstName;
-      var name_Last = customer.lastName;
-      var add_Line1 = customer.AddLine1;
-      var add_City = customer.addCity;
-      var add_State = customer.AddState;
-      var add_Zip = customer.AddZip;
-      var phoneNumber = customer.phoneNumber;
-      var email = customer.email;
-      var newsletter = customer.newsletter;
+      console.log(customer);
+      console.log('call postCustomer');
 
       var jsonData;
       if (data.isNew) {
-        jsonData = JSON.stringify({ "NameFirst": name_First, "NameMiddleIn": null, "NameLast": name_Last, "AddLine1": add_Line1, "AddLine2": null, "AddCity": add_City, "AddState": add_State, "AddZip": add_Zip, "PhoneNumber": phoneNumber, "Email": email, "Newsletter": newsletter });
+        jsonData = JSON.stringify({
+          "NameFirst": customer.firstName,
+          "NameMiddleIn": "",
+          "NameLast": customer.lastName,
+          "AddLine1": customer.addLine1,
+          "AddLine2": "",
+          "AddCity": customer.addCity,
+          "AddState": customer.addState,
+          "AddZip": customer.addZip,
+          "PhoneNumber": customer.phoneNumber,
+          "Email": customer.email,
+          "Newsletter": customer.newsletter
+        });
       } else {
         //update customer info
         var url = "/api/Customers/" + customer.customerId;
         var active = customer.active;
         var accountBalance = customer.accountBalance;
-        jsonData = JSON.stringify({ "customerId": customer.customerId, "NameFirst": name_First, "NameMiddleIn": null, "NameLast": name_Last, "add_Line1": add_Line1, "add_Line2": null, "AddCity": add_City, "add_State": add_State, "add_Zip": add_Zip, "phoneNumber": phoneNumber, "email": email, "newsletter": newsletter, "accountBalance": accountBalance, "active": active });
+        jsonData = JSON.stringify({
+          "nameFirst": customer.firstName,
+          "nameMiddleIn": "",
+          "nameLast": customer.lastName,
+          "addLine1": customer.addLine1,
+          "addLine2": "",
+          "addCity": customer.addCity,
+          "addState": customer.addState,
+          "addZip": customer.addZip,
+          "phoneNumber": customer.phoneNumber,
+          "email": customer.email,
+          "newsletter": customer.newsletter,
+          "active": customer.active
+        });
       }
 
       xhr.open("POST", url, true);
@@ -12885,6 +12907,9 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
             //TODO error handling
           }
       };
+
+      console.log('send jsonData');
+      console.log(jsonData);
       xhr.send(jsonData);
     },
     getMovie(id) {
@@ -13144,6 +13169,8 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
             data.customers = JSON.parse(this.responseText);
             console.log(data.customers);
             //TODO select customer if only one result returned
+          } else if (xhr.status == 404) {
+            alert('Sorry we could not a find a customer that matched your search!'); //TODO replace with nicer alert
           } else {
               //TODO error handling
             }
@@ -13208,34 +13235,36 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
         if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           var copies = JSON.parse(this.responseText);
           console.log(copies);
-          var movies = [{
+          var movies = [];
+          movies.push({
             title: copies[0].title,
             upc: copies[0].upc,
             releaseYear: copies[0].releaseYear,
             inStock: copies[0].status == 0
-          }];
+          });
+          console.log(movies);
+          var lastIndex = 0;
           for (var i = 0; i < copies.length; i++) {
-            var inMovieList = false;
-            for (var j = 0; j < movies.length; j++) {
-              if (copies[i].upc == movies[j].upc) {
-                //update if showing as out of stock
-                if (!movies[j].inStock) {
-                  movies[j].inStock = copies[i].status == 0; //keep setting until true
-                  inMovieList = true;
-                }
+            if (copies[i].upc == movies[lastIndex].upc) {
+              //same upc -- check stock
+              if (!movies[lastIndex].inStock && parseInt(copies[i].status) == 0) {
+                //update stock
+                movies[lastIndex].inStock = true;
               }
-            }
-            if (!inMovieList) {
-              //add to movies
+            } else {
+              //different upc  -- add to movies
               var movie = {
                 title: copies[i].title,
                 upc: copies[i].upc,
                 releaseYear: copies[i].releaseYear,
                 inStock: copies[i].status == 0
               };
+              console.log('new title');
               movies.push(movie);
+              lastIndex++;
             }
           }
+          console.log(movies);
           data.movies = movies;
         } else {
           //TODO error handling
@@ -13244,10 +13273,10 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
       xhr.send(jsonData);
     });
     //view movie title
-    vm.$on('viewMovie', function (upc) {
+    vm.$on('viewMovie', function (movie) {
       console.log('call viewMovie');
-      var upc = ("" + upc).replace(/\D/g, '');
-      var title = "";
+      var upc = ("" + movie.upc).replace(/\D/g, '');
+      var title = movie.title;
       var xhr = new XMLHttpRequest();
       var url = "/api/MovieSearch";
       var jsonData = JSON.stringify({ "Title": title, "ReleaseYear": null, "Genre": null, "Upc": upc });
@@ -13451,24 +13480,41 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
       var url = "/api/Transactions"; //for new
       var vm = this;
 
-      var EmployeeId = data.user.employeeId;
-      var CustomerId = data.rental.customer.customerId;
-      var LateFeePaid = data.rental.customer.accountBalance;
+      var EmployeeId = data.user.employeeId + ""; //to string
+      var CustomerId = data.rental.customer.customerId + "";
+      var LateFeePaid = data.rental.customer.accountBalance + "";
       var PaymentType = data.rental.payment.type;
       var PaymentCard = data.rental.payment.card;
       var MovieList = [];
-      var dueDate = new Date();
-
+      var today = new Date();
+      var dueDate = today;
+      dueDate.setDate(today.getDate() + 1);
+      var day = dueDate.getDate();
+      var month = dueDate.getMonth() + 1;
+      if (day < 10) {
+        day = "0" + day;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      dueDate = dueDate.getFullYear() + "-" + month + "-" + day;
       for (var i = 0; i < data.rental.movies.length; i++) {
         var movie = {
-          id: data.rental.movies[i].movieId,
-          Cost: 3,
+          id: data.rental.movies[i].movieId + "",
+          Cost: "3",
           DueDate: dueDate
         };
         MovieList.push(movie);
       }
 
-      var jsonData = JSON.stringify({ "EmployeeId": EmployeeId, "LateFeePaid": LateFeePaid, "PaymentType": PaymentType, "PaymentCard": PaymentCard, "MovieList": MovieList });
+      var jsonData = JSON.stringify({
+        "EmployeeId": EmployeeId,
+        "CustomerId": CustomerId,
+        "LateFeePaid": LateFeePaid,
+        "PaymentType": PaymentType,
+        "PaymentCard": PaymentCard,
+        "MovieList": MovieList
+      });
 
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-type", "application/json");
@@ -14337,7 +14383,7 @@ var render = function() {
                     attrs: {
                       type: "text",
                       name: "user",
-                      placeholder: "username"
+                      placeholder: "user id"
                     },
                     on: {
                       keyup: function($event) {
@@ -14386,7 +14432,7 @@ var render = function() {
                       },
                       [
                         _c("p", [
-                          _vm._v("Username/password combination incorrect!")
+                          _vm._v("User id/password combination incorrect!")
                         ])
                       ]
                     )
@@ -18316,7 +18362,7 @@ var render = function() {
                         attrs: { "uk-icon": "close" },
                         on: {
                           click: function($event) {
-                            _vm.cancelEdit(_vm.data.movie.upc)
+                            _vm.cancelEdit(_vm.data.movie)
                           }
                         }
                       })
@@ -18642,7 +18688,7 @@ var render = function() {
                               "uk-button uk-button-default uk-margin-left",
                             on: {
                               click: function($event) {
-                                _vm.cancelEdit(_vm.data.movie.upc)
+                                _vm.cancelEdit(_vm.data.movie)
                               }
                             }
                           },
@@ -18782,12 +18828,12 @@ var render = function() {
                         staticClass: "uk-position-relative",
                         on: {
                           click: function($event) {
-                            _vm.view(movie.upc)
+                            _vm.view(movie)
                           }
                         }
                       },
                       [
-                        movie.stock == 0
+                        !movie.inStock
                           ? _c(
                               "span",
                               {
