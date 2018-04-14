@@ -14,6 +14,6 @@ namespace VideoStoreApi.Models
         public int RemBalance {get;set;}
         public int CustId {get;set;}
         public string PymtType { get; set; }
-        public long PymtCard { get; set; }
+        public string PymtCard { get; set; }
     }
 }

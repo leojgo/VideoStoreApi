@@ -53,8 +53,8 @@ namespace VideoStoreApi.Utils
                 trans.CustId = forTrans.CustomerId;
 
                 string newTransQuery =
-                    $"INSERT INTO {DatabaseUtils.Databasename}.transactions(TRANS_ID, TRANS_Date, TRANS_Employee, TRANS_Fees, TRANS_Fees_Paid, TRANS_Total_Paid, TRANS_Rem_Balance, TRANS_Cust_ID, TRANS_Payment_Type, TRANS_Card_Num) " + 
-                    $"VALUES('{trans.TransId}', '{trans.Date}', '{trans.EmpId}', '{trans.Fees}', '{trans.FeesPaid}', '{trans.TotalPaid}', '{trans.RemBalance}', '{trans.CustId}', '{trans.PymtType}', '{trans.PymtCard}');";
+                    $"INSERT INTO {DatabaseUtils.Databasename}.transactions(TRANS_ID, TRANS_Date, TRANS_Employee, TRANS_Fees, TRANS_Fees_Paid, TRANS_Total_Paid, TRANS_Rem_Balance, TRANS_Cust_ID, TRANS_Payment_Type) " + 
+                    $"VALUES('{trans.TransId}', '{trans.Date}', '{trans.EmpId}', '{trans.Fees}', '{trans.FeesPaid}', '{trans.TotalPaid}', '{trans.RemBalance}', '{trans.CustId}', '{trans.PymtType}');";
 
                 
                 if (AddMov2TransInfo.MakeDbQuery(newTransQuery))
@@ -63,7 +63,7 @@ namespace VideoStoreApi.Utils
                     foreach (var movId in forTrans.MovieList)
                     {
                         string updateMovieStatusQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
-                                                        $"SET MOV_STATUS = 1, MOV_RETURN_DATE = \"{movId.DueDate}\" " + 
+                                                        $"SET MOV_STATUS = 1, MOV_STATUS_DATE = \"{movId.DueDate}\" " + 
                                                         $"WHERE MOV_INFO_UNIQ_ID = {movId.Id};";
 
                         if (!AddMov2TransInfo.MakeDbQuery(updateMovieStatusQuery))
