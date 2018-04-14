@@ -35,7 +35,7 @@ namespace VideoStoreApi.Controllers
         public int CustomerId { get; set; }
         public int LateFeePaid { get; set; }
         public string PaymentType { get; set; }
-        public long PaymentCard { get; set; }
+        public string PaymentCard { get; set; }
         public List<Movies4Trans> MovieList { get; set; }
         
     }
