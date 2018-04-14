@@ -12693,7 +12693,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 //console = {};
-console.log = function () {};
+//console.log = function() {} 
 //silence logging for now
 
 //import UIkit from './js/uikit'; 
@@ -13334,7 +13334,13 @@ var app = new __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */]({
 
       var xhr = new XMLHttpRequest();
       var url = "/api/Movies";
-      var jsonData = JSON.stringify({ "Title": Title, "ReleaseYear": ReleaseYear, "Genre": null, "Upc": Upc, "Qty": Qty });
+      var jsonData = JSON.stringify({
+        "Title": Title,
+        "ReleaseYear": ReleaseYear,
+        "Genre": null,
+        "Upc": Upc,
+        "Qty": 0
+      });
       var vm = this;
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-type", "application/json");
