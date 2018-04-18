@@ -107,7 +107,9 @@ namespace VideoStoreApi.Utils
                     entry = null;
                 }
 
-                return popularMovieTitles;
+                var SortedList = popularMovieTitles.OrderByDescending(o => o.count).ToList();
+
+                return SortedList;
             }
             else
             {
@@ -365,7 +367,7 @@ namespace VideoStoreApi.Utils
 
                         temp.Add(curCust);
                         numOfEntriesRead++;
-                        if (numOfEntriesRead >= numberOfResults)
+                        if (numOfEntriesRead >= numberOfResults && numberOfResults != 0)
                         {
                             break;
                         }
