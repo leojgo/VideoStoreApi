@@ -33,7 +33,7 @@ namespace VideoStoreApi.Utils
             return cleanedInfo;
         }
 
-        public bool CreateNewUser(TempEmployee temp)
+        public int CreateNewUser(TempEmployee temp)
         {
             if (PasswordUtils.IsPasswordFormatValid(temp.RawPw))
             {
@@ -43,9 +43,9 @@ namespace VideoStoreApi.Utils
                 var createUserQuery = $"INSERT INTO {DatabaseUtils.Databasename}.employeelist(EMP_Name_First, EMP_Name_Last, EMP_PW_Hash,EMP_Active, EMP_Type, EMP_PhoneNumber) " +
                                             $"VALUES('{newEmployee.FirstName}', '{newEmployee.LastName}','{newEmployee.PwHash}','1','{newEmployee.EmployeeType}',{newEmployee.PhoneNumber});";
                 var createUser = DatabaseUtils.Instance();
-                return createUser.MakeDbQuery(createUserQuery);
+                return createUser.MakeDbQuery(createUserQuery, true);
             }
-            return false;
+            return -1;
         }
 
         public EmployeeInfoToShare ViewEmployeeAccount(int empId)

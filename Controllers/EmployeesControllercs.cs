@@ -36,9 +36,10 @@ namespace VideoStoreApi.Controllers
                         return BadRequest("Your Password is Missing!!!!");
                     }
 
-                    if (newEmployeeUtils.CreateNewUser(toCreate))
+                    var newEmpId = newEmployeeUtils.CreateNewUser(toCreate);
+                    if (newEmpId > 0)
                     {
-                        return NoContent();
+                        return Json(newEmpId);
                     }
                     return BadRequest("Couldnt create the Employee!");
                 }

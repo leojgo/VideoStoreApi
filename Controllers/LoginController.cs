@@ -10,9 +10,6 @@ namespace VideoStoreApi.Controllers
     [Route("api/Login")]
     public class LoginController : Controller
     {
-
-
-
         private readonly SessionContext _context;
 
         public LoginController(SessionContext context)
@@ -21,7 +18,7 @@ namespace VideoStoreApi.Controllers
         }
 
         //===========================================
-        [HttpPost("{id}", Name = "LoginEmployee")]
+        [HttpPost("{id}")]
         public IActionResult Create([FromBody] Login credentials, int id)
         {
             if (credentials == null && id != 0)
