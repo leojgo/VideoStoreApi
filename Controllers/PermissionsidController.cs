@@ -10,18 +10,7 @@ namespace VideoStoreApi.Controllers
     [Route("api/Permissions")]
     public class PermissionsidController : Controller
     {
-        
-
-        private readonly PermissionContext _context;
-
-        public PermissionsidController(PermissionContext context)
-        {
-            _context = context;
-        }
-
-        //===========================================
-
-        [HttpGet("{id}", Name = "GetPermissions")]
+        [HttpPost("{id}", Name = "GetPermissions")]
         public IActionResult GetPermissions(int id)
         {
             try

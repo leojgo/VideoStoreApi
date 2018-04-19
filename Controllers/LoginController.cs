@@ -21,55 +21,53 @@ namespace VideoStoreApi.Controllers
         }
 
         //===========================================
-
-        [HttpGet]
-        public IEnumerable<EmployeeInfoToShare> GetAll()
+        [HttpPost("{id}", Name = "LoginEmployee")]
+        public IActionResult Create([FromBody] Login credentials, int id)
         {
-            return _context.Employees.ToList();
-        }
-
-        [HttpGet("{id}", Name = "LoginEmployee")]
-        public IActionResult GetById(int id)
-        {
-            var item = _context.Employees.FirstOrDefault(t => t.EmployeeId == id);
-            if (item == null)
+            if (credentials == null && id != 0)
             {
-                return NotFound("Employee Was Not Found!");
-            }
-            return new ObjectResult(item);
-        }
-
-        [HttpPost]
-        public IActionResult Create([FromBody] Login credentials)
-        {
-            if (credentials.Username.ToString() == null || credentials.Password == null)
-            {
-                return BadRequest("Username or Password was not provided!");
-            }
-
-            var newEmpUtil = new EmployeeUtils();
-
-            try
-            {
-                var newEmployee = newEmpUtil.LogIn(credentials.Username, credentials.Password);
-
-                if (newEmployee != null)
+                var item = _context.Employees.FirstOrDefault(t => t.EmployeeId == id);
+                if (item == null)
                 {
-                    if (!checkforSession(credentials.Username))
-                    {
-                        _context.Employees.Add(newEmployee);
-                        _context.SaveChanges();
-                        return CreatedAtRoute("LoginEmployee", new { id = newEmployee.EmployeeId }, newEmployee);
-                    }
-                    return Json(newEmployee);
-
-
+                    return NotFound("Employee Was Not Found!");
                 }
-                return NotFound($"Couldn't Login Employee {credentials.Username}! ");
+                return new ObjectResult(item);
             }
-            catch (Exception e)
+            else if(credentials == null)
             {
-                return NotFound($"Couldn't Login Employee {credentials.Username}! " + e);
+                return Json(_context.Employees.ToList());
+            }
+            else
+            {
+                if (credentials.Username.ToString() == null || credentials.Password == null)
+                {
+                    return BadRequest("Username or Password was not provided!");
+                }
+
+                var newEmpUtil = new EmployeeUtils();
+
+                try
+                {
+                    var newEmployee = newEmpUtil.LogIn(credentials.Username, credentials.Password);
+
+                    if (newEmployee != null)
+                    {
+                        if (!checkforSession(credentials.Username))
+                        {
+                            _context.Employees.Add(newEmployee);
+                            _context.SaveChanges();
+                            return CreatedAtRoute("LoginEmployee", new { id = newEmployee.EmployeeId }, newEmployee);
+                        }
+                        return Json(newEmployee);
+
+
+                    }
+                    return NotFound($"Couldn't Login Employee {credentials.Username}! ");
+                }
+                catch (Exception e)
+                {
+                    return NotFound($"Couldn't Login Employee {credentials.Username}! " + e);
+                }
             }
         }
 

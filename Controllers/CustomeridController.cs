@@ -18,28 +18,6 @@ namespace VideoStoreApi.Controllers
         }
 
         //===========================================
-
-        [HttpGet]
-        public IEnumerable<Customer> GetAll()
-        {
-            return _context.Customers.ToList();
-        }
-
-        [HttpGet("{id}", Name = "GetCustomer")]
-        public IActionResult GetById(int id)
-        {
-            var newCustUtil = new CustomerUtils();
-
-            var item = newCustUtil.GetCustomerById(id);
-
-            if (item == null)
-            {
-                return NotFound("Customer Was Not Found");
-            }
-
-            return new ObjectResult(item);
-        }
-
         //DELETE, Non-Destructive
         [HttpDelete("{id}")]
         public IActionResult DeleteCustomer(int id)
@@ -65,29 +43,46 @@ namespace VideoStoreApi.Controllers
         [HttpPost("{id}")]
         public IActionResult UpdateInfo([FromBody] Customer customer, int id)
         {
-
-            var newCustUtil = new CustomerUtils();
-            customer.CustomerId = id;
-            try
+            if (customer == null && id == 0)
             {
-                var result = newCustUtil.UpdateCustomer(customer);
+                return Json(_context.Customers.ToList());
+            }
+            else if (customer == null)
+            {
+                var newCustUtil = new CustomerUtils();
 
-                if (result)
+                var item = newCustUtil.GetCustomerById(id);
+
+                if (item == null)
                 {
-                    //SUCCESS
-                    //_context.Customers.Add(customer);
-                    //_context.SaveChanges();
-                    //return CreatedAtRoute("GetCustomer", new {id = customer.CustomerId}, customer);
-                    return NoContent();
+                    return NotFound("Customer Was Not Found");
                 }
-                return BadRequest($"Couldn't Update Customer!");
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Couldn't Update Customer!" + e);
-            }
-            
 
+                return new ObjectResult(item);
+            }
+            else
+            {
+                var newCustUtil = new CustomerUtils();
+                customer.CustomerId = id;
+                try
+                {
+                    var result = newCustUtil.UpdateCustomer(customer);
+
+                    if (result)
+                    {
+                        //SUCCESS
+                        //_context.Customers.Add(customer);
+                        //_context.SaveChanges();
+                        //return CreatedAtRoute("GetCustomer", new {id = customer.CustomerId}, customer);
+                        return NoContent();
+                    }
+                    return BadRequest($"Couldn't Update Customer!");
+                }
+                catch (Exception e)
+                {
+                    return BadRequest($"Couldn't Update Customer!" + e);
+                }
+            }
         }
     }
 }
