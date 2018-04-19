@@ -35,6 +35,7 @@ namespace VideoStoreApi
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseDefaultFiles();
             app.UseStaticFiles();
 
             app.UseMvc(routes =>
