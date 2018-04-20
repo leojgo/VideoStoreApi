@@ -20,52 +20,56 @@ namespace VideoStoreApi.Utils
             Overdue = SqlGetMovieList(overdueReportSql);
             List<MovieTitles> toRemove = new List<MovieTitles>();
 
-            foreach (var movie in Overdue)
+            if (Overdue != null)
             {
-                if (DateTime.Now.Date < Convert.ToDateTime(movie.ReturnDate).Date)
+                foreach (var movie in Overdue)
                 {
-                    toRemove.Add(movie);
+                    if (DateTime.Now.Date < Convert.ToDateTime(movie.ReturnDate).Date)
+                    {
+                        toRemove.Add(movie);
+                    }
                 }
+
+                foreach (var movie in toRemove)
+                {
+                    Overdue.Remove(movie);
+                }
+
+
+                foreach (var movie in Overdue)
+                {
+                    long CustId = 0;
+                    long TransId = 0;
+
+                    string GetTransIdQuery = $"SELECT MAX(TRANS2MOV_TRANS_ID) " +
+                                            $"FROM {DatabaseUtils.Databasename}.transactions2movies " +
+                                            $"WHERE TRANS2MOV_MOV_ID = {movie.MovieId};";
+
+                    TransId = SqlGetTransInfo(GetTransIdQuery);
+
+                    string GetCustomerIdQuery = $"SELECT TRANS_Cust_ID " +
+                                                $"FROM {DatabaseUtils.Databasename}.transactions " +
+                                                $"WHERE TRANS_ID = {TransId};";
+
+                    CustId = SqlGetCustomerInfo(GetCustomerIdQuery);
+
+                    var getCustomerQuery = $"SELECT * " +
+                                           $"FROM {DatabaseUtils.Databasename}.customers " +
+                                           $"WHERE CUST_ID = {CustId};";
+
+                    Customer CustInfo = new Customer();
+                    CustInfo = SqlGetCustomerById(getCustomerQuery);
+
+                    movie.CustFirstName = CustInfo.NameFirst;
+                    movie.CustLastName = CustInfo.NameLast;
+                    movie.CustPhoneNumber = CustInfo.PhoneNumber;
+                }
+
+                List<MovieTitles> SortedList = Overdue.OrderBy(o => o.ReturnDate).ToList();
+
+                return SortedList;
             }
-
-            foreach (var movie in toRemove)
-            {
-                Overdue.Remove(movie);
-            }
-
-
-            foreach (var movie in Overdue)
-            {
-                long CustId = 0;
-                long TransId = 0;
-
-                string GetTransIdQuery = $"SELECT MAX(TRANS2MOV_TRANS_ID) " +
-                                        $"FROM {DatabaseUtils.Databasename}.transactions2movies " +
-                                        $"WHERE TRANS2MOV_MOV_ID = {movie.MovieId};";
-
-                TransId = SqlGetTransInfo(GetTransIdQuery);
-
-                string GetCustomerIdQuery = $"SELECT TRANS_Cust_ID " + 
-                                            $"FROM {DatabaseUtils.Databasename}.transactions " + 
-                                            $"WHERE TRANS_ID = {TransId};";
-
-                CustId = SqlGetCustomerInfo(GetCustomerIdQuery);
-
-                var getCustomerQuery = $"SELECT * " +
-                                       $"FROM {DatabaseUtils.Databasename}.customers " +
-                                       $"WHERE CUST_ID = {CustId};";
-
-                Customer CustInfo = new Customer();
-                CustInfo = SqlGetCustomerById(getCustomerQuery);
-
-                movie.CustFirstName = CustInfo.NameFirst;
-                movie.CustLastName = CustInfo.NameLast;
-                movie.CustPhoneNumber = CustInfo.PhoneNumber;
-            }
-
-            List<MovieTitles> SortedList = Overdue.OrderBy(o=>o.ReturnDate).ToList();
-
-            return SortedList;
+            return null;
         }
 
         public List<Movie2ClassResultsString> RunPopularReport(int numberofRecords)
@@ -76,32 +80,41 @@ namespace VideoStoreApi.Utils
                                        $"GROUP by TRANS2MOV_MOV_ID;";
 
             List<Movie2ClassResults> popularMovies = SQLGetPopularList(PopularMovieQuery);
-
-            if (numberofRecords > 0)
+            if (popularMovies != null)
             {
-                var count = popularMovies.Count - numberofRecords;
-                if (count > 0)
+
+                if (numberofRecords > 0)
                 {
-                    popularMovies.RemoveRange(popularMovies.Count - count, count);
+                    var count = popularMovies.Count - numberofRecords;
+                    if (count > 0)
+                    {
+                        popularMovies.RemoveRange(popularMovies.Count - count, count);
+                    }
                 }
+
+                List<Movie2ClassResultsString> popularMovieTitles = new List<Movie2ClassResultsString>();
+
+                foreach (var movieID in popularMovies)
+                {
+                    Movie2ClassResultsString entry = new Movie2ClassResultsString();
+                    string getTitleQuery = $"SELECT * " +
+                                           $"FROM {DatabaseUtils.Databasename}.MovieInfo " +
+                                           $"WHERE MOV_INFO_UNIQ_ID = {movieID.MovieId};";
+
+                    entry.Title = SqlGetMovieById(getTitleQuery);
+                    entry.count = movieID.count;
+                    popularMovieTitles.Add(entry);
+                    entry = null;
+                }
+
+                var SortedList = popularMovieTitles.OrderByDescending(o => o.count).ToList();
+
+                return SortedList;
             }
-
-            List<Movie2ClassResultsString> popularMovieTitles = new List<Movie2ClassResultsString>();
-
-            foreach (var movieID in popularMovies)
+            else
             {
-                Movie2ClassResultsString entry = new Movie2ClassResultsString();
-                string getTitleQuery = $"SELECT * " +
-                                       $"FROM {DatabaseUtils.Databasename}.MovieInfo " +
-                                       $"WHERE MOV_INFO_UNIQ_ID = {movieID.MovieId};";
-
-                entry.Title = SqlGetMovieById(getTitleQuery);
-                entry.count = movieID.count;
-                popularMovieTitles.Add(entry);
-                entry = null;
+                return null;
             }
-
-            return popularMovieTitles;
         }
 
         public List<CustomerInfo> RunCustomerReport(int NumberofResults)
@@ -113,28 +126,35 @@ namespace VideoStoreApi.Utils
                                       $"GROUP BY TRANS_Cust_ID ORDER BY count DESC;";
 
             List<PopularCustomerInfo> CustomerInfo = SqlGetCustIDs(GetBestInfoQuery, NumberofResults);
-
-            foreach (var cust in CustomerInfo)
+            if (CustomerInfo != null)
             {
-                var getCustomerQuery = $"SELECT * " +
-                                       $"FROM {DatabaseUtils.Databasename}.customers " +
-                                       $"WHERE CUST_ID = {cust.customerId};";
 
-                Customer CustInfo = new Customer();
-                CustInfo = SqlGetCustomerById(getCustomerQuery);
-                
+                foreach (var cust in CustomerInfo)
+                {
+                    var getCustomerQuery = $"SELECT * " +
+                                           $"FROM {DatabaseUtils.Databasename}.customers " +
+                                           $"WHERE CUST_ID = {cust.customerId};";
 
-                CustomerInfo bestCust = new CustomerInfo();
-                bestCust.CustomerId = CustInfo.CustomerId;
-                bestCust.NameFirst = CustInfo.NameFirst;
-                bestCust.NameLast = CustInfo.NameLast;
-                bestCust.PhoneNumber = CustInfo.PhoneNumber;
-                bestCust.TransactionCount = cust.transactionCount;
+                    Customer CustInfo = new Customer();
+                    CustInfo = SqlGetCustomerById(getCustomerQuery);
 
-                BestCustomers.Add(bestCust);
+
+                    CustomerInfo bestCust = new CustomerInfo();
+                    bestCust.CustomerId = CustInfo.CustomerId;
+                    bestCust.NameFirst = CustInfo.NameFirst;
+                    bestCust.NameLast = CustInfo.NameLast;
+                    bestCust.PhoneNumber = CustInfo.PhoneNumber;
+                    bestCust.TransactionCount = cust.transactionCount;
+
+                    BestCustomers.Add(bestCust);
+                }
+
+                return BestCustomers;
             }
-
-            return BestCustomers;
+            else
+            {
+                return null;
+            }
         }
 
         private List<Movie2ClassResults> SQLGetPopularList(string dbQuery)
@@ -347,7 +367,7 @@ namespace VideoStoreApi.Utils
 
                         temp.Add(curCust);
                         numOfEntriesRead++;
-                        if (numOfEntriesRead >= numberOfResults)
+                        if (numOfEntriesRead >= numberOfResults && numberOfResults != 0)
                         {
                             break;
                         }

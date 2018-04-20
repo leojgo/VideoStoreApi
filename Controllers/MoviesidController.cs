@@ -11,55 +11,46 @@ namespace VideoStoreApi.Controllers
     [Route("api/Movies")]
     public class MovieIdController : Controller
     {
-        
-
-        private readonly MovieContext _context;
-
-        public MovieIdController(MovieContext context)
-        {
-            _context = context;
-        }
-
-        [HttpGet("{id}", Name = "GetMovie")]
-        public IActionResult GetMovieById(long id)
-        {
-            var newMovieUtils = new MovieUtils();
-
-            var lookedUpMovie = newMovieUtils.GetMovieById(id);
-            try
-            {
-                if (lookedUpMovie.Title != null)
-                {
-                    return new ObjectResult(lookedUpMovie);
-                }
-                return NotFound($"There was no movie '{id}' found!");
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, $"Couldnt find the movie you Specified ({id})! " + e);
-            }
-        }
-
-
         [HttpPost("{id}")]
         public IActionResult UpdateMovieInfo([FromBody]Movie updatedMovieInfo, long id)
         {
-            try
+            if (updatedMovieInfo == null)
             {
                 var newMovieUtils = new MovieUtils();
-                updatedMovieInfo.MovieId = id;
-                var result = newMovieUtils.UpdateMovieInfo(updatedMovieInfo);
 
-                if (result)
+                var lookedUpMovie = newMovieUtils.GetMovieById(id);
+                try
                 {
-                    return Ok();
+                    if (lookedUpMovie.Title != null)
+                    {
+                        return new ObjectResult(lookedUpMovie);
+                    }
+                    return NotFound($"There was no movie '{id}' found!");
                 }
-                return BadRequest("Couldnt Update the Movie Info! :'( ");
-
+                catch (Exception e)
+                {
+                    return StatusCode(500, $"Couldnt find the movie you Specified ({id})! " + e);
+                }
             }
-            catch (Exception e)
+            else
             {
-                return BadRequest("Something Broke while updating the Movie Info!! " + e);
+                try
+                {
+                    var newMovieUtils = new MovieUtils();
+                    updatedMovieInfo.MovieId = id;
+                    var result = newMovieUtils.UpdateMovieInfo(updatedMovieInfo);
+
+                    if (result)
+                    {
+                        return Ok();
+                    }
+                    return BadRequest("Couldnt Update the Movie Info! :'( ");
+
+                }
+                catch (Exception e)
+                {
+                    return BadRequest("Something Broke while updating the Movie Info!! " + e);
+                }
             }
         }
     }

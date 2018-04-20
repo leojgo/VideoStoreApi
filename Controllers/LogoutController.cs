@@ -9,8 +9,6 @@ namespace VideoStoreApi.Controllers
     [Route("api/Logout")]
     public class LogoutController : Controller
     {
-        
-
         private readonly SessionContext _context;
 
         public LogoutController(SessionContext context)
@@ -20,37 +18,32 @@ namespace VideoStoreApi.Controllers
 
         //===========================================
 
-        [HttpGet]
-        public IEnumerable<EmployeeInfoToShare> GetAll()
+        [HttpPost("{id}", Name = "LogOut Employee")]
+        public IActionResult Create([FromBody] Logout credentials, int id)
         {
-            return _context.Employees.ToList();
-        }
-
-        [HttpGet("{id}", Name = "LogOut Employee")]
-        public IActionResult GetById(int id)
-        {
-            var item = _context.Employees.FirstOrDefault(t => t.EmployeeId == id);
+            if (credentials == null)
+            {
+                  var item = _context.Employees.FirstOrDefault(t => t.EmployeeId == id);
             if (item == null)
             {
                 return NotFound("Employee was Not Found!");
             }
             return new ObjectResult(item);
-        }
-
-        [HttpPost]
-        public IActionResult Create([FromBody] Logout credentials)
-        {
-            var newEmpUtil = new EmployeeUtils();
-            var toLogOut = newEmpUtil.ViewEmployeeAccount(credentials.Username);
-
-            if (toLogOut == null)
-            {
-                return NotFound("Employee was Not Found!");
             }
+            else
+            {
+                var newEmpUtil = new EmployeeUtils();
+                var toLogOut = newEmpUtil.ViewEmployeeAccount(credentials.Username);
 
-            _context.Employees.Remove(toLogOut);
-            _context.SaveChanges();
-            return new NoContentResult();
+                if (toLogOut == null)
+                {
+                    return NotFound("Employee was Not Found!");
+                }
+
+                _context.Employees.Remove(toLogOut);
+                _context.SaveChanges();
+                return new NoContentResult();
+            }
         }
     }
 

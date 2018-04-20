@@ -20,17 +20,38 @@ namespace VideoStoreApi.Controllers
                     if (RequestInfo.reportType == "Overdue")
                     {
                         var overdue = newReportUtils.RunOverdueReport(RequestInfo.reportQty);
-                        return Json(overdue);
+                        if (overdue != null)
+                        {
+                            return Json(overdue);
+                        }
+                        else
+                        {
+                            return NoContent();
+                        }
                     }
                     else if (RequestInfo.reportType == "Popular")
                     {
                         var Popular = newReportUtils.RunPopularReport(RequestInfo.reportQty);
-                        return Json(Popular);
+                        if (Popular != null)
+                        {
+                            return Json(Popular);
+                        }
+                        else
+                        {
+                            return NoContent();
+                        }
                     }
                     else if (RequestInfo.reportType == "Customer")
                     {
                         var bestCust = newReportUtils.RunCustomerReport(RequestInfo.reportQty);
-                        return Json(bestCust);
+                        if (bestCust != null)
+                        {
+                            return Json(bestCust);
+                        }
+                        else
+                        {
+                            return NoContent();
+                        }
                     }
                 }
 

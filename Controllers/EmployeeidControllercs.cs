@@ -15,21 +15,6 @@ namespace VideoStoreApi.Controllers
         }
 
         //===========================================
-
-        [HttpGet("{id}")]
-        public IActionResult GetEmployeeInfoById(int id)
-        {
-            var newEmployeeUtils = new EmployeeUtils();
-            var empToClean = newEmployeeUtils.GetEmployeeById(id);
-            if (empToClean != null)
-            {
-                return Ok(empToClean);
-            }
-
-            return NotFound($"Couldnt find an Employee with the ID: {id}");
-        }
-
-
         [HttpPost("{id}")]
         public IActionResult UpdateInfo([FromBody] EmployeeInfoToShare updatedInfo, int id)
         {
@@ -44,8 +29,19 @@ namespace VideoStoreApi.Controllers
                         return NoContent();
                     }
                 }
+                return BadRequest("Invalid Input!!!");
             }
-            return BadRequest("Invalid Input!!!");
+            else
+            {
+                var newEmployeeUtils = new EmployeeUtils();
+                var empToClean = newEmployeeUtils.GetEmployeeById(id);
+                if (empToClean != null)
+                {
+                    return Ok(empToClean);
+                }
+
+                return NotFound($"Couldnt find an Employee with the ID: {id}");
+            }
         }
     }
 }

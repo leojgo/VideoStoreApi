@@ -17,36 +17,36 @@ namespace VideoStoreApi.Controllers
         }       
 
         //===========================================
-
-        [HttpGet]
-        public IEnumerable<EmployeeInfoToShare> GetAll()
-        {
-            var newEmployeeUtils = new EmployeeUtils();
-
-            return newEmployeeUtils.GetAllEmployees();
-        }
-
         [HttpPost]
         public IActionResult Create([FromBody] TempEmployee toCreate)
         {
-            var newEmployeeUtils = new EmployeeUtils();
-            try
+            if (toCreate == null)
             {
-                if (toCreate.RawPw == null)
-                {
-                    return BadRequest("Your Password is Missing!!!!");
-                }
+                var newEmployeeUtils = new EmployeeUtils();
 
-            
-                if(newEmployeeUtils.CreateNewUser(toCreate))
-                {
-                    return NoContent();
-                }
-                return BadRequest("Couldnt create the Employee!");
+                return Json(newEmployeeUtils.GetAllEmployees());
             }
-            catch (Exception e)
+            else
             {
-                return BadRequest("Couldnt create the Employee!" + e);
+                var newEmployeeUtils = new EmployeeUtils();
+                try
+                {
+                    if (toCreate.RawPw == null)
+                    {
+                        return BadRequest("Your Password is Missing!!!!");
+                    }
+
+                    var newEmpId = newEmployeeUtils.CreateNewUser(toCreate);
+                    if (newEmpId > 0)
+                    {
+                        return Json(newEmpId);
+                    }
+                    return BadRequest("Couldnt create the Employee!");
+                }
+                catch (Exception e)
+                {
+                    return BadRequest("Couldnt create the Employee!" + e);
+                }
             }
             
         }

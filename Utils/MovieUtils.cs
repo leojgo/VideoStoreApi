@@ -56,7 +56,7 @@ namespace VideoStoreApi.Utils
                                            $"MOV_INFO_GENRE = '{newMovieInfo.Genre}', " +
                                            $"MOV_INFO_UPC = '{newMovieInfo.Upc}', " +
                                            $"MOV_STATUS = '{newMovieInfo.Status}', " +
-                                           $"MOV_RETURN_DATE = null " +
+                                           $"MOV_STATUS_DATE = null " +
                                            $"WHERE MOV_INFO_UNIQ_ID = '{newMovieInfo.MovieId}';";
             }
             else
@@ -67,7 +67,7 @@ namespace VideoStoreApi.Utils
                                        $"MOV_INFO_RELEASE_YEAR = '{newMovieInfo.ReleaseYear}', " +
                                        $"MOV_INFO_GENRE = '{newMovieInfo.Genre}', " +
                                        $"MOV_INFO_UPC = '{newMovieInfo.Upc}', " +
-                                       $"MOV_STATUS = '{newMovieInfo.Status}' " +
+                                       $"MOV_STATUS_DATE = '{newMovieInfo.Status}' " +
                                        $"WHERE MOV_INFO_UNIQ_ID = '{newMovieInfo.MovieId}';";
             }
 
@@ -178,7 +178,7 @@ namespace VideoStoreApi.Utils
                 updateMovieInfoQuery = $"UPDATE {DatabaseUtils.Databasename}.movieinfo " +
                                            "SET " +
                                            $"MOV_STATUS = '0', " +
-                                           $"MOV_RETURN_DATE = null " +
+                                           $"MOV_STATUS_DATE = null " +
                                            $"WHERE MOV_INFO_UNIQ_ID = '{movie.Id}';";
 
                 var updateMovie = DatabaseUtils.Instance();
