@@ -18,32 +18,20 @@ namespace VideoStoreApi.Controllers
 
         //===========================================
 
-        [HttpPost("{id}", Name = "LogOut Employee")]
-        public IActionResult Create([FromBody] Logout credentials, int id)
+        [HttpPost]
+        public IActionResult Create([FromBody] Logout credentials)
         {
-            if (credentials == null)
-            {
-                  var item = _context.Employees.FirstOrDefault(t => t.EmployeeId == id);
-            if (item == null)
+            var newEmpUtil = new EmployeeUtils();
+            var toLogOut = newEmpUtil.ViewEmployeeAccount(credentials.Username);
+
+            if (toLogOut == null)
             {
                 return NotFound("Employee was Not Found!");
             }
-            return new ObjectResult(item);
-            }
-            else
-            {
-                var newEmpUtil = new EmployeeUtils();
-                var toLogOut = newEmpUtil.ViewEmployeeAccount(credentials.Username);
 
-                if (toLogOut == null)
-                {
-                    return NotFound("Employee was Not Found!");
-                }
-
-                _context.Employees.Remove(toLogOut);
-                _context.SaveChanges();
-                return new NoContentResult();
-            }
+            _context.Employees.Remove(toLogOut);
+            _context.SaveChanges();
+            return new NoContentResult();
         }
     }
 
