@@ -67,7 +67,7 @@ namespace VideoStoreApi.Utils
                                        $"MOV_INFO_RELEASE_YEAR = '{newMovieInfo.ReleaseYear}', " +
                                        $"MOV_INFO_GENRE = '{newMovieInfo.Genre}', " +
                                        $"MOV_INFO_UPC = '{newMovieInfo.Upc}', " +
-                                       $"MOV_STATUS_DATE = '{newMovieInfo.Status}' " +
+                                       $"MOV_STATUS = '{newMovieInfo.Status}' " +
                                        $"WHERE MOV_INFO_UNIQ_ID = '{newMovieInfo.MovieId}';";
             }
 
