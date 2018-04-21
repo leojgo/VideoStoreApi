@@ -95,6 +95,7 @@ namespace VideoStoreApi.Utils
             var cleanedEmployeeInfo = new List<EmployeeInfoToShare>();
             foreach (var employee in allEmployees)
             {
+                employee.EmployeeTitle = GetEmployeeTitle(employee);
                 cleanedEmployeeInfo.Add(RemovePersonalInfo(employee));
             }
 
