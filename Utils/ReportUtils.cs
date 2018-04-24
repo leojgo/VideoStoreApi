@@ -15,7 +15,7 @@ namespace VideoStoreApi.Utils
 
             string overdueReportSql = $"SELECT * " +
                                       $"FROM {DatabaseUtils.Databasename}.movieinfo " +
-                                      $"WHERE MOV_STATUS > 0;";
+                                      $"WHERE MOV_STATUS = 1;";
 
             Overdue = SqlGetMovieList(overdueReportSql);
             List<MovieTitles> toRemove = new List<MovieTitles>();
