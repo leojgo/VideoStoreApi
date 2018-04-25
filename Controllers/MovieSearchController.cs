@@ -17,9 +17,12 @@ namespace VideoStoreApi.Controllers
 
             searchResults = newMovieUtils.SearchMovies(searchInfo);
 
-            if (searchResults.Count >= 1)
+            if (searchResults != null)
             {
-                return new ObjectResult(searchResults);
+                if (searchResults.Count >= 1)
+                {
+                    return new ObjectResult(searchResults);
+                }
             }
 
             return NotFound("No Results were found given the search terms entered!");
