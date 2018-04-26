@@ -7,13 +7,6 @@ namespace VideoStoreApi.Controllers
     [Route("api/Employee")]
     public class EmployeeidController : Controller
     {
-        private readonly EmployeeContext _context;
-
-        public EmployeeidController(EmployeeContext context)
-        {
-            _context = context;
-        }
-
         //===========================================
         [HttpPost("{id}")]
         public IActionResult UpdateInfo([FromBody] EmployeeInfoToShare updatedInfo, int id)

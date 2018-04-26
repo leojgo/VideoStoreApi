@@ -9,13 +9,6 @@ namespace VideoStoreApi.Controllers
     [Route("api/Employees")]
     public class EmployeesController : Controller
     {
-        private readonly EmployeeContext _context;
-
-        public EmployeesController(EmployeeContext context)
-        {
-            _context = context;
-        }       
-
         //===========================================
         [HttpPost]
         public IActionResult Create([FromBody] TempEmployee toCreate)

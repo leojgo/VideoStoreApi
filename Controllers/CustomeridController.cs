@@ -10,13 +10,6 @@ namespace VideoStoreApi.Controllers
     [Route("api/Customers")]
     public class CustomerIdController : Controller
     {
-        private readonly CustomerContext _context;
-
-        public CustomerIdController(CustomerContext context)
-        {
-            _context = context;
-        }
-
         //===========================================
         //DELETE, Non-Destructive
         [HttpDelete("{id}")]
@@ -43,11 +36,7 @@ namespace VideoStoreApi.Controllers
         [HttpPost("{id}")]
         public IActionResult UpdateInfo([FromBody] Customer customer, int id)
         {
-            if (customer == null && id == 0)
-            {
-                return Json(_context.Customers.ToList());
-            }
-            else if (customer == null)
+            if (customer == null)
             {
                 var newCustUtil = new CustomerUtils();
 
@@ -70,10 +59,6 @@ namespace VideoStoreApi.Controllers
 
                     if (result)
                     {
-                        //SUCCESS
-                        //_context.Customers.Add(customer);
-                        //_context.SaveChanges();
-                        //return CreatedAtRoute("GetCustomer", new {id = customer.CustomerId}, customer);
                         return NoContent();
                     }
                     return BadRequest($"Couldn't Update Customer!");

@@ -9,13 +9,6 @@ namespace VideoStoreApi.Controllers
     [Route("api/Logout")]
     public class LogoutController : Controller
     {
-        private readonly SessionContext _context;
-
-        public LogoutController(SessionContext context)
-        {
-            _context = context;
-        }       
-
         //===========================================
 
         [HttpPost]
@@ -28,9 +21,6 @@ namespace VideoStoreApi.Controllers
             {
                 return NotFound("Employee was Not Found!");
             }
-
-            _context.Employees.Remove(toLogOut);
-            _context.SaveChanges();
             return new NoContentResult();
         }
     }
