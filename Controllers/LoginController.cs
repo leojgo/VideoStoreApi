@@ -53,7 +53,8 @@ namespace VideoStoreApi.Controllers
                         {
                             _context.Employees.Add(newEmployee);
                             _context.SaveChanges();
-                            return CreatedAtRoute("LoginEmployee", new { id = newEmployee.EmployeeId }, newEmployee);
+                            //return CreatedAtRoute("LoginEmployee", new { id = newEmployee.EmployeeId }, newEmployee);
+                            return Json(newEmployee);
                         }
                         return Json(newEmployee);
 
