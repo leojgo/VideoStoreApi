@@ -137,16 +137,20 @@ namespace VideoStoreApi.Utils
 
                     Customer CustInfo = new Customer();
                     CustInfo = SqlGetCustomerById(getCustomerQuery);
+                    if (CustInfo != null)
+                    {
+                        if (CustInfo.Active)
+                        {
+                            CustomerInfo bestCust = new CustomerInfo();
+                            bestCust.CustomerId = CustInfo.CustomerId;
+                            bestCust.NameFirst = CustInfo.NameFirst;
+                            bestCust.NameLast = CustInfo.NameLast;
+                            bestCust.PhoneNumber = CustInfo.PhoneNumber;
+                            bestCust.TransactionCount = cust.transactionCount;
 
-
-                    CustomerInfo bestCust = new CustomerInfo();
-                    bestCust.CustomerId = CustInfo.CustomerId;
-                    bestCust.NameFirst = CustInfo.NameFirst;
-                    bestCust.NameLast = CustInfo.NameLast;
-                    bestCust.PhoneNumber = CustInfo.PhoneNumber;
-                    bestCust.TransactionCount = cust.transactionCount;
-
-                    BestCustomers.Add(bestCust);
+                            BestCustomers.Add(bestCust);
+                        }
+                    }
                 }
 
                 return BestCustomers;
@@ -328,6 +332,7 @@ namespace VideoStoreApi.Utils
                         temp.NameFirst = reader.GetString($"CUST_Name_First");
                         temp.NameLast = reader.GetString($"CUST_Name_Last");
                         temp.PhoneNumber = reader.GetString($"CUST_PhoneNumber");
+                        temp.Active = reader.GetBoolean($"CUST_Active");
                     }
 
                     dbCon.Close();
